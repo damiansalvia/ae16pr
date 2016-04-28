@@ -1,6 +1,6 @@
-#include "newGA.hh"
+#include "prAE.hh"
 
-skeleton newGA
+skeleton prAE
 {
 
 // StopCondition -------------------------------------------------------------------------------------
@@ -339,22 +339,22 @@ skeleton newGA
 
 	ostream& operator<< (ostream& os, const Statistics& stats)
 	{
-		os << "\n---------------------------------------------------------------" << endl;
-		os << "                   STATISTICS OF CURRENT TRIAL                   " << endl;
-		os << "------------------------------------------------------------------" << endl;
-		for (int i=0;i< stats.stats_data.size();i++)
-	     	{
-			os << endl
-			   << " Trial:	" << stats.stats_data[i].trial
-			   << " Generation: " << stats.stats_data[i].nb_generation
-			   << " Evaluation: " << stats.stats_data[i].nb_evaluation
-			   << " Current best cost: " << stats.stats_data[i].best_cost
-			   << " Global best cost: " << stats.stats_data[i].global_best_cost
-			   << " Avg: " << stats.stats_data[i].average_cost
-			   << " Std. Dev.: " << stats.stats_data[i].standard_deviation;
-		}
-
-		os << endl << "------------------------------------------------------------------" << endl;
+//		os << "\n---------------------------------------------------------------" << endl;
+//		os << "                   STATISTICS OF CURRENT TRIAL                   " << endl;
+//		os << "------------------------------------------------------------------" << endl;
+//		for (int i=0;i< stats.stats_data.size();i++)
+//	     	{
+//			os << endl
+//			   << " Trial:	" << stats.stats_data[i].trial
+//			   << " Generation: " << stats.stats_data[i].nb_generation
+//			   << " Evaluation: " << stats.stats_data[i].nb_evaluation
+//			   << " Current best cost: " << stats.stats_data[i].best_cost
+//			   << " Global best cost: " << stats.stats_data[i].global_best_cost
+//			   << " Avg: " << stats.stats_data[i].average_cost
+//			   << " Std. Dev.: " << stats.stats_data[i].standard_deviation;
+//		}
+//
+//		os << endl << "------------------------------------------------------------------" << endl;
 		return os;
 	}
 

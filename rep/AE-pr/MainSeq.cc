@@ -1,8 +1,8 @@
-#include "newGA.hh"
+#include "prAE.hh"
 
 int main (int argc, char** argv)
 {
-	using skeleton newGA;
+	using skeleton prAE;
 
 	system("clear");
 

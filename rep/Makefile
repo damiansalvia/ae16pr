@@ -1,6 +1,4 @@
 all:
-	(cd CHC ; make)
-	(cd GA ; make)
+	(cd AE-pr ; make)
 clean:
-	(cd CHC ; make clean)
-	(cd GA ; make clean)
+	(cd AE-pr ; make clean)

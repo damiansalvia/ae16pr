@@ -1,5 +1,5 @@
-#ifndef INC_newGA_mallba_hh
-#define INC_newGA_mallba_hh
+#ifndef INC_prAE_mallba_hh
+#define INC_prAE_mallba_hh
 
 
 #include <iostream>

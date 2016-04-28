@@ -7,11 +7,11 @@
 *** tabular size = 4																				   ***
 **********************************************************************************************************/
 
-#ifndef INC_newGA
-#define INC_newGA
-#include "newGAstructures.hh"
+#ifndef INC_prAE
+#define INC_prAE
+#include "prAEstructures.hh"
 
-skeleton newGA
+skeleton prAE
 {
 // Si se definen m�s de 5 nuevos operadores por parte del usuario, se debe cambiar esta constante.
 #define MAX_OP_USER 5
@@ -71,6 +71,8 @@ skeleton newGA
 
 		int _dimension;
 		// TODO - Hacer lo def de la estructura
+		int* _camino; // int* cuidades:3;
+		int** _ciudades;
   };
 
 //Solution ----------------------------------------------------------------------------

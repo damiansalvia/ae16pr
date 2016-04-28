@@ -1,8 +1,9 @@
 # Malva Configuration.
-MALLBA_DIR=/home/damian/workspace/ae2016pr
+WHOIAM=/ens/home01/d/damian.salvia/AE_2016/
+MALLBA_DIR=${WHOIAM}/ae16pr/
 
 # MPI library
-MPI_BIN=/usr/bin
+MPI_BIN=/usr/lib64/mpich/bin
 
 # Malva information
 MALLBA_INC=${MALLBA_DIR}/src

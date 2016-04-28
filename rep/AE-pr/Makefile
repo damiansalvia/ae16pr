@@ -5,13 +5,13 @@ all: MainLan MainSeq
 clean:
 	rm -f MainLan MainSeq MainWan *.o *% *~
 
-MainLan: newGA.req.o newGA.pro.o MainLan.o
+MainLan: prAE.req.o prAE.pro.o MainLan.o
 	$(CXX) $(LDFLAGS) $^ $(LOADLIBES) $(CPPFLAGS) -o $@
 
-MainWan: newGA.req.o newGA.pro.o MainWan.o
+MainWan: prAE.req.o prAE.pro.o MainWan.o
 	$(CXX) $(LDFLAGS) $^ $(LOADLIBES) $(CPPFLAGS) -o $@
 
-MainSeq: newGA.req.o newGA.pro.o MainSeq.o
+MainSeq: prAE.req.o prAE.pro.o MainSeq.o
 	$(CXX) $(LDFLAGS) $^ $(LOADLIBES) $(CPPFLAGS) -o $@
 
 LAN:
@@ -21,4 +21,4 @@ WAN:
 	$(RUN) -v  -p4pg pgfileWan MainWan
 
 SEQ:
-	./MainSeq newGA.cfg ../../ProblemInstances/ONEMAX-instances/onemax10.txt res/sol.txt
+	./MainSeq prAE.cfg ../../ProblemInstances/ONEMAX-instances/onemax10.txt res/sol.txt
