@@ -10,8 +10,7 @@ skeleton prAE {
 
 // Problem ---------------------------------------------------------------
 
-Problem::Problem() :
-		_dimension(0) {
+Problem::Problem() : _dimension(0) {
 }
 
 ostream& operator<<(ostream& os, const Problem& pbm) {
@@ -34,7 +33,7 @@ istream& operator>>(istream& is, Problem& pbm) {
 	// Inicializacion matriz cuidades
 	pbm._ciudades = new int *[pbm._dimension];
 	for (int i = 0; i < pbm._dimension; i++) {
-		pbm._ciudades[] = new int[pbm._dimension];
+		pbm._ciudades[i] = new int[pbm._dimension];
 		for (int j = 0; j < pbm._dimension; j++) {
 			pbm._ciudades[i][j] = (i == j) ? 0 : -1;
 		}
