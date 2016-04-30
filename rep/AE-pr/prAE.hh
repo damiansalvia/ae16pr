@@ -65,6 +65,8 @@ skeleton prAE
 
 		int dimension() const;
 		// TODO - Hacer los defs de los metodos
+		int** ciudades() const;
+		int* camino() const;
 		const char* getfield(char* line, int num);
 
 	private:

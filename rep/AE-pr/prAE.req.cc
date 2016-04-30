@@ -9,14 +9,26 @@
 skeleton prAE {
 
 // Problem ---------------------------------------------------------------
-
-Problem::Problem() : _dimension(0) {
+// TODO - Despues de "Problem():" van todos los atributos inicializados
+Problem::Problem() : _dimension(0),_ciudades(NULL), _camino(NULL) {
 }
 
 ostream& operator<<(ostream& os, const Problem& pbm) {
 	os << endl << endl << "Number of Variables " << pbm._dimension << endl;
-
+	os << "LLEGUE - operator<< 1";
 	// TODO
+	//Imprimo el arreglo con los limites de barrios
+	os<<"Matriz costo ciudades: "<<endl<<endl;
+	for (int i=0;i<pbm._dimension;i++){
+		os<<i<<": ";
+		int indice=0;
+		while (pbm._ciudades[i][indice]!=-1){
+			os<<pbm._ciudades[i][indice]<<",";
+			indice++;
+		}
+		os<<endl;
+	}
+	os<<endl;
 
 	return os;
 }
@@ -35,7 +47,7 @@ istream& operator>>(istream& is, Problem& pbm) {
 	for (int i = 0; i < pbm._dimension; i++) {
 		pbm._ciudades[i] = new int[pbm._dimension];
 		for (int j = 0; j < pbm._dimension; j++) {
-			pbm._ciudades[i][j] = (i == j) ? 0 : -1;
+			pbm._ciudades[i][j] = -1;
 		}
 	}
 
@@ -68,6 +80,14 @@ const char* Problem::getfield(char* line, int num) {
 	return NULL;
 }
 
+int** Problem::ciudades() const{
+	return _ciudades;
+}
+
+int* Problem::camino() const{
+	return _camino;
+}
+
 bool Problem::operator==(const Problem& pbm) const {
 	if (_dimension != pbm.dimension())
 		return false;
@@ -79,8 +99,8 @@ bool Problem::operator!=(const Problem& pbm) const {
 }
 
 Direction Problem::direction() const {
-	return maximize;
-	//return minimize;
+	// return maximize;
+	return minimize;
 }
 
 int Problem::dimension() const {
@@ -89,20 +109,23 @@ int Problem::dimension() const {
 
 Problem::~Problem() {
 	// TODO - Implementar destricutor - Depende del problema y nuestro datatype
+	//Libero la memoria pedida para almacenar los limites de los barrios
+	for (int i=0;i<_dimension;i++)
+		delete [] _ciudades[i];
+	delete [] _ciudades;
+	delete [] _camino;
 }
 
 // Solution --------------------------------------------------------------
 
-Solution::Solution(const Problem& pbm) :
-		_pbm(pbm), _var(pbm.dimension()) {
+Solution::Solution(const Problem& pbm) : _pbm(pbm), _var(pbm.dimension()) {
 }
 
 const Problem& Solution::pbm() const {
 	return _pbm;
 }
 
-Solution::Solution(const Solution& sol) :
-		_pbm(sol.pbm()) {
+Solution::Solution(const Solution& sol) : _pbm(sol.pbm()) {
 	*this = sol;
 }
 
@@ -150,16 +173,22 @@ bool Solution::operator!=(const Solution& sol) const {
 
 void Solution::initialize() {
 	for (int i = 0; i < _pbm.dimension(); i++)
-		_var[i] = rand_int(0, 1);
+		_var[i] = rand_int(0, 3);
 }
 
 double Solution::fitness() {
 	double fitness = 0.0;
 
 	// TODO - Función de fitness
-	for (int i = 0; i < _var.size(); i++)
-		fitness += _var[i];
-
+	for (int i = 0; i < _var.size(); i++){
+		int indice = 0;
+		while (pbm().ciudades()[i][indice]!=-1){
+			if (_var[i] == _var[pbm().ciudades()[i][indice]]){
+				fitness++;
+			}
+			indice++;
+		}
+	}
 	return fitness;
 }
 
@@ -277,6 +306,7 @@ Intra_Operator *Intra_Operator::create(const unsigned int _number_op) {
 		return new Mutation();
 		break;
 	}
+	return NULL; // TODO - Sino da error
 }
 
 ostream& operator<<(ostream& os, const Intra_Operator& intra) {
@@ -365,10 +395,8 @@ void Mutation::mutate(Solution& sol) const {
 	// TODO - Implementar mutación
 	for (int i = 0; i < sol.pbm().dimension(); i++) {
 		if (rand01() <= probability[1]) {
-			if (sol.var(i) == 1)
-				sol.var(i) = 0;
-			else
-				sol.var(i) = 1;
+			//La mutacion modifica un gen aleatoriamente con probabilidad uniforme en {0,3}
+			sol.var(i)=rand_int(0,3);
 		}
 	}
 }
@@ -409,16 +437,24 @@ Mutation::~Mutation() {
 
 // StopCondition_1 -------------------------------------------------------------------------------------
 
-StopCondition_1::StopCondition_1() :
-		StopCondition() {
+StopCondition_1::StopCondition_1() : StopCondition() {
 }
 
 bool StopCondition_1::EvaluateCondition(const Problem& pbm,
 		const Solver& solver, const SetUpParams& setup) {
-	// TODO - Implementar condicion de parada
+	// TODO - Implementar condicion de parada. Si el fitness es 0 terminamos la ejecucion.
+	bool fin=(int)solver.best_cost_trial() == 0;
+	if (fin){
+		// TODO - Escribir resultado en archivo de salida
+		FILE * pFile;
+		pFile = fopen ("res/sol.my.output","w");
+		for (int i=0;i<pbm.dimension();i++){
+			fprintf (pFile, "%d,%d\n",i+1,solver.best_solution_trial().var(i));
+		}
+		fclose (pFile);
+	}
 
-	// TODO - Escribir resultado en archivo de salida
-	return ((int) solver.best_cost_trial() == pbm.dimension());
+	return (fin);
 }
 
 StopCondition_1::~StopCondition_1() {
