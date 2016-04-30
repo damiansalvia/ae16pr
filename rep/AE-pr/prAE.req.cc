@@ -10,20 +10,19 @@ skeleton prAE {
 
 // Problem ---------------------------------------------------------------
 // TODO - Despues de "Problem():" van todos los atributos inicializados
-Problem::Problem() : _dimension(0),_ciudades(NULL), _camino(NULL) {
+Problem::Problem() : _dimension(0),_ciudades(NULL),_camino(NULL) {
 }
 
 ostream& operator<<(ostream& os, const Problem& pbm) {
-	os << endl << endl << "Number of Variables " << pbm._dimension << endl;
-	os << "LLEGUE - operator<< 1";
-	// TODO
-	//Imprimo el arreglo con los limites de barrios
-	os<<"Matriz costo ciudades: "<<endl<<endl;
+	os << endl << endl << "Numero de variables " << pbm._dimension << endl;
+
+	// TODO - Imprimo el arreglo con el costo de viaje entre ciudades
+	os<<"Matriz costo ciudades: "<<endl;
 	for (int i=0;i<pbm._dimension;i++){
 		os<<i<<": ";
 		int indice=0;
 		while (pbm._ciudades[i][indice]!=-1){
-			os<<pbm._ciudades[i][indice]<<",";
+			os<<pbm._ciudades[i][indice]<<" ";
 			indice++;
 		}
 		os<<endl;
@@ -37,13 +36,13 @@ istream& operator>>(istream& is, Problem& pbm) {
 	char buffer[MAX_BUFFER];
 	int i;
 
+	//pbm._dimension = 5; // TODO - Harcoded
+
 	is.getline(buffer, MAX_BUFFER, '\n');
 	sscanf(buffer, "%d", &pbm._dimension);
 
-	// TODO - Inicializar la estructura (-1) e inicializa con los datos del problema
-
-	// Inicializacion matriz cuidades
-	pbm._ciudades = new int *[pbm._dimension];
+	// TODO - Inicializacion matriz cuidades
+	pbm._ciudades = new int*[pbm._dimension];
 	for (int i = 0; i < pbm._dimension; i++) {
 		pbm._ciudades[i] = new int[pbm._dimension];
 		for (int j = 0; j < pbm._dimension; j++) {
@@ -51,19 +50,19 @@ istream& operator>>(istream& is, Problem& pbm) {
 		}
 	}
 
-	// Cargar datos desde archivo
+	// TODO - Cargar datos desde archivo
 	FILE* stream = fopen("ej1_matriz", "r");
 	char line[1024];
 	i = 0;
-	while (fgets(line, 1024, stream)) {
-		char* tmp = strdup(line);
-		for (int j = 0; j < 5; j++) { // TODO
-			const char * costo_str = pbm.getfield(tmp, j);
+	while (fgets(line, 1024, stream) && i < 5) {
+		for (int j = 0; j < 5; j++) { // TODO - j harcoded
+			char* tmp = strdup(line);
+			const char * costo_str = pbm.getfield(tmp, j+1);
 			int costo = atoi(costo_str);
 			pbm._ciudades[i][j] = costo;
+			free(tmp);
 		}
 		i++;
-		free(tmp);
 	}
 	cout << pbm;
 
@@ -73,7 +72,7 @@ istream& operator>>(istream& is, Problem& pbm) {
 const char* Problem::getfield(char* line, int num) {
 	// TODO - Lee csv - Queremos leer generador.py
 	const char* tok;
-	for (tok = strtok(line, " "); tok && *tok; tok = strtok(NULL, ",\n")) {
+	for (tok = strtok(line, " "); tok && *tok; tok = strtok(NULL, " \n")) {
 		if (!--num)
 			return tok;
 	}
@@ -108,8 +107,7 @@ int Problem::dimension() const {
 }
 
 Problem::~Problem() {
-	// TODO - Implementar destricutor - Depende del problema y nuestro datatype
-	//Libero la memoria pedida para almacenar los limites de los barrios
+	// TODO - Libero la memoria pedida para almacenar los limites de los barrios
 	for (int i=0;i<_dimension;i++)
 		delete [] _ciudades[i];
 	delete [] _ciudades;
