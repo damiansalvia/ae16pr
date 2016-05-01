@@ -1,4 +1,5 @@
 #include "prAE.hh"
+#include <stdlib.h>
 
 int main (int argc, char** argv)
 {
@@ -17,25 +18,25 @@ int main (int argc, char** argv)
 
 	Problem pbm;
 	f2 >> pbm;
+//
+//	Operator_Pool pool(pbm);
+//	SetUpParams cfg(pool);
+//	f1 >> cfg;
+//
+//	Solver_Seq solver(pbm,cfg);
+//	solver.run();
 
-	Operator_Pool pool(pbm);
-	SetUpParams cfg(pool);
-	f1 >> cfg;
-
-	Solver_Seq solver(pbm,cfg);
-	solver.run();
-
-	if (solver.pid()==0)
-	{
-		solver.show_state();
-		cout << "Solution: " << solver.global_best_solution()
-		     << " Fitness: " << solver.global_best_solution().fitness() << endl;
-		cout << "\n\n :( ---------------------- THE END --------------- :) ";
-
-		ofstream fexit(argv[3]);
-		if(!fexit) show_message(13);
-		fexit << solver.userstatistics();
-
-	}
+//	if (solver.pid()==0)
+//	{
+//		solver.show_state();
+//		cout << "Solution: " << solver.global_best_solution()
+//		     << " Fitness: " << solver.global_best_solution().fitness() << endl;
+//		cout << "\n\n :( ---------------------- THE END --------------- :) ";
+//
+//		ofstream fexit(argv[3]);
+//		if(!fexit) show_message(13);
+//		fexit << solver.userstatistics();
+//
+//	}
 	return(0);
 }

@@ -10,24 +10,29 @@ skeleton prAE {
 
 // Problem ---------------------------------------------------------------
 // TODO - Despues de "Problem():" van todos los atributos inicializados
-Problem::Problem() : _dimension(0),_ciudades(NULL),_camino(NULL) {
+Problem::Problem() : _num_ciudades(0),_ciudades(NULL),_camino(NULL) {
 }
 
 ostream& operator<<(ostream& os, const Problem& pbm) {
-	os << endl << endl << "Numero de variables " << pbm._dimension << endl;
+	os << endl << endl;
 
-	// TODO - Imprimo el arreglo con el costo de viaje entre ciudades
-	os<<"Matriz costo ciudades: "<<endl;
-	for (int i=0;i<pbm._dimension;i++){
-		os<<i<<": ";
-		int indice=0;
-		while (pbm._ciudades[i][indice]!=-1){
-			os<<pbm._ciudades[i][indice]<<" ";
-			indice++;
-		}
-		os<<endl;
+	// TODO - Imprimo los datos de mis atributos problema
+	os << "Cantidad ciudades: " << pbm._num_ciudades << endl;
+
+	os << "Temporadas: ";
+	for(int i = 0; i < 3; i++)
+		os << ((i == 0)?"Baja(":(i == 1)?"Media(":"Alta(") << pbm._temporadas[i] << ") ";
+	os << endl;
+
+
+	os << "Matriz costo ciudades: " << endl;
+	for (int i = 0 ; i < pbm._num_ciudades ; i++){
+		os << i << ": ";
+		for(int j = 0; j < pbm._num_ciudades; j++)
+			os << pbm._ciudades[i][j] << " ";
+		os << endl;
 	}
-	os<<endl;
+	os << endl;
 
 	return os;
 }
@@ -36,16 +41,24 @@ istream& operator>>(istream& is, Problem& pbm) {
 	char buffer[MAX_BUFFER];
 	int i;
 
-	//pbm._dimension = 5; // TODO - Harcoded
+	// TODO - Leer archivo con parametros para generador
+	is.getline(buffer,MAX_BUFFER, '\n');
+	pbm._num_ciudades = atoi(buffer);
+	is.getline(buffer,MAX_BUFFER, '\n');
+	float tasa_ciudades_no_directo = (float) atof(buffer);
+	is.getline(buffer,MAX_BUFFER, '\n');
+	char* nombre = buffer;
 
-	is.getline(buffer, MAX_BUFFER, '\n');
-	sscanf(buffer, "%d", &pbm._dimension);
+	// TODO - Invocar al generador
+	char command_buffer[MAX_BUFFER];
+	sprintf(command_buffer,"python generador.py %d %f %s",pbm._num_ciudades,tasa_ciudades_no_directo, nombre);
+	system(command_buffer);
 
 	// TODO - Inicializacion matriz cuidades
-	pbm._ciudades = new int*[pbm._dimension];
-	for (int i = 0; i < pbm._dimension; i++) {
-		pbm._ciudades[i] = new int[pbm._dimension];
-		for (int j = 0; j < pbm._dimension; j++) {
+	pbm._ciudades = new int*[pbm._num_ciudades];
+	for (int i = 0; i < pbm._num_ciudades; i++) {
+		pbm._ciudades[i] = new int[pbm._num_ciudades];
+		for (int j = 0; j < pbm._num_ciudades; j++) {
 			pbm._ciudades[i][j] = -1;
 		}
 	}
@@ -54,26 +67,38 @@ istream& operator>>(istream& is, Problem& pbm) {
 	FILE* stream = fopen("ej1_matriz", "r");
 	char line[1024];
 	i = 0;
-	while (fgets(line, 1024, stream) && i < 5) {
-		for (int j = 0; j < 5; j++) { // TODO - j harcoded
+	while (fgets(line, 1024, stream) && i < pbm._num_ciudades) {
+		for (int j = 0; j < pbm._num_ciudades; j++) {
 			char* tmp = strdup(line);
-			const char * costo_str = pbm.getfield(tmp, j+1);
-			int costo = atoi(costo_str);
-			pbm._ciudades[i][j] = costo;
+			const char* costo_str = pbm.getfield(tmp, j);
+			pbm._ciudades[i][j] = atoi(costo_str);
 			free(tmp);
 		}
 		i++;
 	}
+	fclose(stream);
+
+	stream = fopen("ej1_temporadas", "r");
+	i = 0;
+	while (fgets(line, 1024, stream) && i < 3) {
+		char* tmp = strdup(line);
+		const char * tmp_str = strtok(tmp,",");
+		pbm._temporadas[i] = atoi(tmp_str);
+		free(tmp);
+		i++;
+	}
+	fclose(stream);
+
 	cout << pbm;
 
 	return is;
 }
 
-const char* Problem::getfield(char* line, int num) {
-	// TODO - Lee csv - Queremos leer generador.py
+const char* Problem::getfield(char* line, int pos) {
+	// TODO - Leer celda en fila de matriz
 	const char* tok;
 	for (tok = strtok(line, " "); tok && *tok; tok = strtok(NULL, " \n")) {
-		if (!--num)
+		if (!pos--)
 			return tok;
 	}
 	return NULL;
@@ -88,7 +113,7 @@ int* Problem::camino() const{
 }
 
 bool Problem::operator==(const Problem& pbm) const {
-	if (_dimension != pbm.dimension())
+	if (_num_ciudades != pbm.num_ciudades())
 		return false;
 	return true;
 }
@@ -102,13 +127,13 @@ Direction Problem::direction() const {
 	return minimize;
 }
 
-int Problem::dimension() const {
-	return _dimension;
+int Problem::num_ciudades() const {
+	return _num_ciudades;
 }
 
 Problem::~Problem() {
 	// TODO - Libero la memoria pedida para almacenar los limites de los barrios
-	for (int i=0;i<_dimension;i++)
+	for (int i=0;i<_num_ciudades;i++)
 		delete [] _ciudades[i];
 	delete [] _ciudades;
 	delete [] _camino;
@@ -116,7 +141,7 @@ Problem::~Problem() {
 
 // Solution --------------------------------------------------------------
 
-Solution::Solution(const Problem& pbm) : _pbm(pbm), _var(pbm.dimension()) {
+Solution::Solution(const Problem& pbm) : _pbm(pbm), _var(pbm.num_ciudades() ) {
 }
 
 const Problem& Solution::pbm() const {
@@ -128,13 +153,13 @@ Solution::Solution(const Solution& sol) : _pbm(sol.pbm()) {
 }
 
 istream& operator>>(istream& is, Solution& sol) {
-	for (int i = 0; i < sol.pbm().dimension(); i++)
+	for (int i = 0; i < sol.pbm().num_ciudades(); i++)
 		is >> sol._var[i];
 	return is;
 }
 
 ostream& operator<<(ostream& os, const Solution& sol) {
-	for (int i = 0; i < sol.pbm().dimension(); i++)
+	for (int i = 0; i < sol.pbm().num_ciudades(); i++)
 		os << " " << sol._var[i];
 	return os;
 }
@@ -170,7 +195,7 @@ bool Solution::operator!=(const Solution& sol) const {
 }
 
 void Solution::initialize() {
-	for (int i = 0; i < _pbm.dimension(); i++)
+	for (int i = 0; i < _pbm.num_ciudades(); i++)
 		_var[i] = rand_int(0, 3);
 }
 
@@ -196,14 +221,14 @@ char *Solution::to_String() const {
 
 void Solution::to_Solution(char *_string_) {
 	int *ptr = (int *) _string_;
-	for (int i = 0; i < _pbm.dimension(); i++) {
+	for (int i = 0; i < _pbm.num_ciudades(); i++) {
 		_var[i] = *ptr;
 		ptr++;
 	}
 }
 
 unsigned int Solution::size() const {
-	return (_pbm.dimension() * sizeof(int));
+	return (_pbm.num_ciudades() * sizeof(int));
 }
 
 int& Solution::var(const int index) {
@@ -333,20 +358,20 @@ void Crossover::cross(Solution& sol1, Solution& sol2) const // dadas dos solucio
 		{
 	// TODO - Implementar cruzamiento (2PX)
 	int i = 0;
-	Rarray<int> aux(sol1.pbm().dimension());
+	Rarray<int> aux(sol1.pbm().num_ciudades());
 	aux = sol2.array_var();
 
-	int limit = rand_int((sol1.pbm().dimension() / 2) + 1,
-			sol1.pbm().dimension() - 1);
+	int limit = rand_int((sol1.pbm().num_ciudades() / 2) + 1,
+			sol1.pbm().num_ciudades() - 1);
 	int limit2 = rand_int(0, limit - 1);
 
 	for (i = 0; i < limit2; i++)
 		sol2.var(i) = sol1.var(i);
 	for (i = 0; i < limit2; i++)
 		sol1.var(i) = aux[i];
-	for (i = limit; i < sol1.pbm().dimension(); i++)
+	for (i = limit; i < sol1.pbm().num_ciudades(); i++)
 		sol2.var(i) = sol1.var(i);
-	for (i = limit; i < sol1.pbm().dimension(); i++)
+	for (i = limit; i < sol1.pbm().num_ciudades(); i++)
 		sol1.var(i) = aux[i];
 }
 
@@ -391,7 +416,7 @@ Mutation::Mutation() :
 
 void Mutation::mutate(Solution& sol) const {
 	// TODO - Implementar mutación
-	for (int i = 0; i < sol.pbm().dimension(); i++) {
+	for (int i = 0; i < sol.pbm().num_ciudades(); i++) {
 		if (rand01() <= probability[1]) {
 			//La mutacion modifica un gen aleatoriamente con probabilidad uniforme en {0,3}
 			sol.var(i)=rand_int(0,3);
@@ -446,7 +471,7 @@ bool StopCondition_1::EvaluateCondition(const Problem& pbm,
 		// TODO - Escribir resultado en archivo de salida
 		FILE * pFile;
 		pFile = fopen ("res/sol.my.output","w");
-		for (int i=0;i<pbm.dimension();i++){
+		for (int i=0;i<pbm.num_ciudades();i++){
 			fprintf (pFile, "%d,%d\n",i+1,solver.best_solution_trial().var(i));
 		}
 		fclose (pFile);

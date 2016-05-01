@@ -63,18 +63,20 @@ skeleton prAE
 
 		Direction direction () const;
 
-		int dimension() const;
 		// TODO - Hacer los defs de los metodos
 		int** ciudades() const;
 		int* camino() const;
+		int num_ciudades() const;
 		const char* getfield(char* line, int num);
 
 	private:
 
-		int _dimension;
 		// TODO - Hacer lo def de la estructura
+		int _num_ciudades;
+		int _temporadas[3];
 		int* _camino; // int* cuidades:3;
 		int** _ciudades;
+
   };
 
 //Solution ----------------------------------------------------------------------------
