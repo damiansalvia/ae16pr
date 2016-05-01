@@ -10,7 +10,7 @@ skeleton prAE {
 
 // Problem ---------------------------------------------------------------
 // TODO - Despues de "Problem():" van todos los atributos inicializados
-Problem::Problem() : _num_ciudades(0),_ciudades(NULL),_camino(NULL) {
+Problem::Problem() : _num_ciudades(0),_ciudades(NULL) {
 }
 
 ostream& operator<<(ostream& os, const Problem& pbm) {
@@ -108,11 +108,16 @@ int** Problem::ciudades() const{
 	return _ciudades;
 }
 
-int* Problem::camino() const{
-	return _camino;
+const int* Problem::temporadas() const {
+	return _temporadas;
+}
+
+int Problem::num_ciudades() const {
+	return _num_ciudades;
 }
 
 bool Problem::operator==(const Problem& pbm) const {
+	// FIXME - Comparar dos insancias de tipo Problem por medio de la matriz
 	if (_num_ciudades != pbm.num_ciudades())
 		return false;
 	return true;
@@ -123,25 +128,20 @@ bool Problem::operator!=(const Problem& pbm) const {
 }
 
 Direction Problem::direction() const {
-	// return maximize;
+	//return maximize;
 	return minimize;
 }
 
-int Problem::num_ciudades() const {
-	return _num_ciudades;
-}
-
 Problem::~Problem() {
-	// TODO - Libero la memoria pedida para almacenar los limites de los barrios
+	// TODO - Liberar memoria de las estructuras
 	for (int i=0;i<_num_ciudades;i++)
 		delete [] _ciudades[i];
 	delete [] _ciudades;
-	delete [] _camino;
 }
 
 // Solution --------------------------------------------------------------
 
-Solution::Solution(const Problem& pbm) : _pbm(pbm), _var(pbm.num_ciudades() ) {
+Solution::Solution(const Problem& pbm) : _pbm(pbm), _camino(pbm.num_ciudades() ) {
 }
 
 const Problem& Solution::pbm() const {
@@ -154,38 +154,38 @@ Solution::Solution(const Solution& sol) : _pbm(sol.pbm()) {
 
 istream& operator>>(istream& is, Solution& sol) {
 	for (int i = 0; i < sol.pbm().num_ciudades(); i++)
-		is >> sol._var[i];
+		is >> sol._camino[i];
 	return is;
 }
 
 ostream& operator<<(ostream& os, const Solution& sol) {
 	for (int i = 0; i < sol.pbm().num_ciudades(); i++)
-		os << " " << sol._var[i];
+		os << " " << sol._camino[i];
 	return os;
 }
 
 NetStream& operator <<(NetStream& ns, const Solution& sol) {
-	for (int i = 0; i < sol._var.size(); i++)
-		ns << sol._var[i];
+	for (int i = 0; i < sol._camino.size(); i++)
+		ns << sol._camino[i];
 	return ns;
 }
 
 NetStream& operator >>(NetStream& ns, Solution& sol) {
-	for (int i = 0; i < sol._var.size(); i++)
-		ns >> sol._var[i];
+	for (int i = 0; i < sol._camino.size(); i++)
+		ns >> sol._camino[i];
 	return ns;
 }
 
 Solution& Solution::operator=(const Solution &sol) {
-	_var = sol._var;
+	_camino = sol._camino;
 	return *this;
 }
 
 bool Solution::operator==(const Solution& sol) const {
 	if (sol.pbm() != _pbm)
 		return false;
-	for (int i = 0; i < _var.size(); i++)
-		if (_var[i] != sol._var[i])
+	for (int i = 0; i < _camino.size(); i++)
+		if (_camino[i] != sol._camino[i])
 			return false;
 	return true;
 }
@@ -195,34 +195,56 @@ bool Solution::operator!=(const Solution& sol) const {
 }
 
 void Solution::initialize() {
-	for (int i = 0; i < _pbm.num_ciudades(); i++)
-		_var[i] = rand_int(0, 3);
+	// TODO - Inicializar el camino aleatoriamente
+	int max = _pbm.num_ciudades();
+	for (int i = 0; i < max; i++)
+		_camino[i] = i;
+
+	for(int i = 0; i < max*5 ; i++){ // 5 es arbitrario para dispersar valor inicial
+		int ind1 = rand_int(1,max-1); // La posicion 0 no se cambia, por eso entre 1..max-1
+		int ind2 = rand_int(1,max-1);
+
+		// Hace swap para generar aleatorio
+		int aux = _camino[ind1];
+		_camino[ind1] = _camino[ind2];
+		_camino[ind2] = aux;
+	}
 }
 
 double Solution::fitness() {
+	// TODO - Inicializar fitness
 	double fitness = 0.0;
 
+	// Declarar constantes
+	int temp_media = 1.1, temp_alta = 1.3;
+	int ini_temp_media = _pbm.temporadas()[1], ini_temp_alta = _pbm.temporadas()[2];
+
 	// TODO - Función de fitness
-	for (int i = 0; i < _var.size(); i++){
-		int indice = 0;
-		while (pbm().ciudades()[i][indice]!=-1){
-			if (_var[i] == _var[pbm().ciudades()[i][indice]]){
-				fitness++;
-			}
-			indice++;
+	int dia = 1;
+	for (int i = 1; i < _camino.size(); i++){
+		int valor = _pbm.ciudades()[i-1][i];
+		if(valor==-1){
+			// TODO - Pensar caso
+		}else if (dia < ini_temp_media){ // Caso temprada baja
+			fitness += valor;
+		}else if (dia < ini_temp_alta){ // Caso temporada media
+			fitness += valor*temp_media;
+		}else{ // Caso temporada alta
+			fitness += valor*temp_alta;
 		}
+		dia += 5;
 	}
 	return fitness;
 }
 
 char *Solution::to_String() const {
-	return (char *) _var.get_first();
+	return (char *) _camino.get_first();
 }
 
 void Solution::to_Solution(char *_string_) {
 	int *ptr = (int *) _string_;
 	for (int i = 0; i < _pbm.num_ciudades(); i++) {
-		_var[i] = *ptr;
+		_camino[i] = *ptr;
 		ptr++;
 	}
 }
@@ -231,12 +253,12 @@ unsigned int Solution::size() const {
 	return (_pbm.num_ciudades() * sizeof(int));
 }
 
-int& Solution::var(const int index) {
-	return _var[index];
+int& Solution::pos(const int index) {
+	return _camino[index];
 }
 
-Rarray<int>& Solution::array_var() {
-	return _var;
+Rarray<int>& Solution::camino() {
+	return _camino;
 }
 
 Solution::~Solution() {
@@ -356,23 +378,23 @@ Crossover::Crossover() :
 
 void Crossover::cross(Solution& sol1, Solution& sol2) const // dadas dos soluciones de la poblacion, las cruza
 		{
-	// TODO - Implementar cruzamiento (2PX)
+	// TODO -
 	int i = 0;
 	Rarray<int> aux(sol1.pbm().num_ciudades());
-	aux = sol2.array_var();
+	aux = sol2.camino();
 
 	int limit = rand_int((sol1.pbm().num_ciudades() / 2) + 1,
 			sol1.pbm().num_ciudades() - 1);
 	int limit2 = rand_int(0, limit - 1);
 
 	for (i = 0; i < limit2; i++)
-		sol2.var(i) = sol1.var(i);
+		sol2.pos(i) = sol1.pos(i);
 	for (i = 0; i < limit2; i++)
-		sol1.var(i) = aux[i];
+		sol1.pos(i) = aux[i];
 	for (i = limit; i < sol1.pbm().num_ciudades(); i++)
-		sol2.var(i) = sol1.var(i);
+		sol2.pos(i) = sol1.pos(i);
 	for (i = limit; i < sol1.pbm().num_ciudades(); i++)
-		sol1.var(i) = aux[i];
+		sol1.pos(i) = aux[i];
 }
 
 void Crossover::execute(Rarray<Solution*>& sols) const {
@@ -419,7 +441,7 @@ void Mutation::mutate(Solution& sol) const {
 	for (int i = 0; i < sol.pbm().num_ciudades(); i++) {
 		if (rand01() <= probability[1]) {
 			//La mutacion modifica un gen aleatoriamente con probabilidad uniforme en {0,3}
-			sol.var(i)=rand_int(0,3);
+			sol.pos(i)=rand_int(0,3);
 		}
 	}
 }
@@ -472,7 +494,7 @@ bool StopCondition_1::EvaluateCondition(const Problem& pbm,
 		FILE * pFile;
 		pFile = fopen ("res/sol.my.output","w");
 		for (int i=0;i<pbm.num_ciudades();i++){
-			fprintf (pFile, "%d,%d\n",i+1,solver.best_solution_trial().var(i));
+			fprintf (pFile, "%d,%d\n",i+1,solver.best_solution_trial().pos(i));
 		}
 		fclose (pFile);
 	}

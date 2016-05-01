@@ -67,6 +67,7 @@ skeleton prAE
 		int** ciudades() const;
 		int* camino() const;
 		int num_ciudades() const;
+		const int* temporadas() const;
 		const char* getfield(char* line, int num);
 
 	private:
@@ -74,7 +75,6 @@ skeleton prAE
 		// TODO - Hacer lo def de la estructura
 		int _num_ciudades;
 		int _temporadas[3];
-		int* _camino; // int* cuidades:3;
 		int** _ciudades;
 
   };
@@ -106,11 +106,11 @@ skeleton prAE
 		double fitness ();
 		unsigned int size() const;
 
-		int& var(const int index);
-		Rarray<int>& array_var();
+		int& pos(const int index);
+		Rarray<int>& camino();
 
 	private:
-		Rarray<int> _var;
+		Rarray<int> _camino;
 		const Problem& _pbm;
   };
 
