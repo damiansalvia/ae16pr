@@ -228,8 +228,8 @@ double Solution::fitness() {
 
 	// Declarar constantes
 	int temp_media = 1.1, temp_alta = 1.3;
-	int ini_temp_media = _pbm.temporadas()[1], ini_temp_alta =
-			_pbm.temporadas()[2];
+	const int ini_temp_media = _pbm.temporadas()[1];
+	const int ini_temp_alta = _pbm.temporadas()[2];
 
 	// TODO - Función de fitness
 	int dia = 1;
@@ -257,7 +257,7 @@ char *Solution::to_String() const {
 //	for (int i = 1; i < _dimension; i++) {
 //		sprintf(ret, " %d", _camino[i]);
 //	}
-//	return ret;
+	return ret.data();
 }
 
 void Solution::to_Solution(char *_string_) {
@@ -765,52 +765,56 @@ Crossover_OX::Crossover_OX() :
 
 // Order Crossover (OX)
 void Crossover_OX::cross(Solution& sol1, Solution& sol2) const { // dadas dos soluciones de la poblacion, las cruza
-
+	// FIXME - Da error
 	int i;
 	int j1, j2;
 	const int max = sol1.dimension();
 
-	// Copy old solutions
-	Rarray<int> aux1(max);
-	aux1 = sol1.camino();
-	Rarray<int> aux2(max);
-	aux2 = sol2.camino();
+	// Copiar soluciones
+	Rarray<int> camino1(max);
+	camino1 = sol1.camino();
+	Rarray<int> camino2(max);
+	camino2 = sol2.camino();
 
 	// esta?[i] = true  if i+1 is in segement or false in otherwise
 	bool *esta1 = new bool[max];
 	bool *esta2 = new bool[max];
 
+	// Establecer puntos de corte
 	int limit2 = rand_int(1, max - 1);
 	int limit1 = rand_int(0, limit2 - 1);
 
+	// Inicializar esta[]
 	for (i = 0; i < max; i++) {
 		esta1[i] = false;
 		esta2[i] = false;
 	}
 
+	// Hacer swap del contenido entre puntos de corte
 	for (i = limit1; i < limit2; i++) {
-		sol1.pos(i) = aux1[i];
-		sol2.pos(i) = aux2[i];
-		esta1[aux1[i] - 1] = true;
-		esta2[aux2[i] - 1] = true;
+		sol1.pos(i) = camino1[i];
+		sol2.pos(i) = camino2[i];
+		esta1[camino1[i]] = true;
+		esta2[camino2[i]] = true;
 	}
 
+	// Hacer el shift del resto
 	j1 = j2 = i = limit2;
-
 	if ((limit1 != 0) || (limit2 != max)) {
+
 		while (i != limit1) {
-			while (esta1[aux2[j1] - 1])
+			while (esta1[camino2[j1]])
 				j1 = (j1 + 1) % max;
 
-			sol1.pos(i) = aux2[j1];
-			esta1[aux2[j1] - 1] = true;
+			sol1.pos(i) = camino2[j1];
+			esta1[camino2[j1]] = true;
 			j1 = (j1 + 1) % max;
 
-			while (esta2[aux1[j2] - 1])
+			while (esta2[camino1[j2]])
 				j2 = (j2 + 1) % max;
 
-			sol2.pos(i) = aux1[j2];
-			esta2[aux1[j2] - 1] = true;
+			sol2.pos(i) = camino1[j2];
+			esta2[camino1[j2]] = true;
 			j2 = (j2 + 1) % max;
 
 			i = (i + 1) % max;
@@ -1153,7 +1157,7 @@ void Crossover_ER::remove_pos(int e, int l, int **m, int *c_m) const {
 	c_m[l]--;
 }
 
-void execute(Rarray<Solution*>& sols) const {
+void Crossover_ER::execute(Rarray<Solution*>& sols) const {
 	for (int i = 0; i + 1 < sols.size(); i = i + 2)
 		if (rand01() <= probability[0])
 			cross(*sols[i], *sols[i + 1]);
@@ -1197,12 +1201,10 @@ bool StopCondition_1::EvaluateCondition(const Problem& pbm,
 	bool fin = (int) solver.best_cost_trial() == 0;
 
 	// TODO - Escribir archivo de salida
-	char filename[1024];
-	sprintf(filename, "%s.sol", pbm.nombre());
 	if (fin) {
 		//Escribo el resultado en el archivo de salida
 		FILE * pFile;
-		pFile = fopen(filename, "w");
+		pFile = fopen("solucion.out", "w");
 		fprintf(pFile, "%d", solver.best_solution_trial().to_String());
 		fclose(pFile);
 	}

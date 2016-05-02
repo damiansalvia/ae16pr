@@ -1,8 +1,8 @@
 # Malva Configuration.
-MALLBA_DIR=/home/damian/git/ae16pr
+MALLBA_DIR=/ens/home01/d/damian.salvia/AE_2016
 
 # MPI library
-MPI_BIN=/usr/bin
+MPI_BIN=/usr/lib64/mpich/bin
 
 # Malva information
 MALLBA_INC=${MALLBA_DIR}/src
