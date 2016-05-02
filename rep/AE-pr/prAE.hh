@@ -111,7 +111,6 @@ public:
 
 private:
 	Rarray<int> _camino;
-	unsigned int _dimension;
 	const Problem& _pbm;
 };
 

@@ -10,7 +10,7 @@ skeleton prAE {
 // Problem ---------------------------------------------------------------
 // TODO - Despues de "Problem():" van todos los atributos inicializados
 Problem::Problem() :
-		_num_ciudades(0), _ciudades(NULL) {
+		_num_ciudades(0), _ciudades(NULL),_nombre(NULL) {
 }
 
 ostream& operator<<(ostream& os, const Problem& pbm) {
@@ -51,21 +51,23 @@ istream& operator>>(istream& is, Problem& pbm) {
 
 	// TODO - Invocar al generador
 	char command_buffer[MAX_BUFFER];
-	sprintf(command_buffer, "python generador.py %d %f %s", pbm._num_ciudades,
-			tasa_ciudades_no_directo, pbm._nombre);
-	system(command_buffer);
+	if (not strcmp(pbm._nombre,"ej1")){
+		sprintf(command_buffer, "python generador.py %d %f ins/%s", pbm._num_ciudades,
+				tasa_ciudades_no_directo, pbm._nombre);
+		system(command_buffer);
+	}
 
 	// TODO - Inicializacion matriz cuidades
 	pbm._ciudades = new int*[pbm._num_ciudades];
 	for (int i = 0; i < pbm._num_ciudades; i++) {
 		pbm._ciudades[i] = new int[pbm._num_ciudades];
-		for (int j = 0; j < pbm._num_ciudades; j++) {
+		for (int j = 0; j < pbm._num_ciudades; j++)
 			pbm._ciudades[i][j] = -1;
-		}
 	}
 
 	// TODO - Cargar datos desde archivo
-	FILE* stream = fopen("ej1_matriz", "r");
+	sprintf((char*)command_buffer,"ins/%s_matriz",pbm._nombre);
+	FILE* stream = fopen(command_buffer, "r");
 	char line[1024];
 	i = 0;
 	while (fgets(line, 1024, stream) && i < pbm._num_ciudades) {
@@ -79,7 +81,8 @@ istream& operator>>(istream& is, Problem& pbm) {
 	}
 	fclose(stream);
 
-	stream = fopen("ej1_temporadas", "r");
+	sprintf((char*)command_buffer,"ins/%s_temporadas",pbm._nombre);
+	stream = fopen(command_buffer, "r");
 	i = 0;
 	while (fgets(line, 1024, stream) && i < 3) {
 		char* tmp = strdup(line);
@@ -118,7 +121,6 @@ int Problem::num_ciudades() const {
 }
 
 char* Problem::nombre() const {
-	cout << _nombre<<endl; // FIXME
 	return _nombre;
 }
 
@@ -149,8 +151,7 @@ Problem::~Problem() {
 
 Solution::Solution(const Problem& pbm) :
 		_pbm(pbm) {
-	_dimension = pbm.num_ciudades();
-	_camino = Rarray<int>(_dimension);
+	_camino = Rarray<int>(pbm.num_ciudades());
 }
 
 const Problem& Solution::pbm() const {
@@ -187,7 +188,6 @@ NetStream& operator >>(NetStream& ns, Solution& sol) {
 }
 
 Solution& Solution::operator=(const Solution &sol) {
-	_dimension = sol._dimension;
 	_camino = sol._camino;
 	return *this;
 }
@@ -207,7 +207,7 @@ bool Solution::operator!=(const Solution& sol) const {
 
 void Solution::initialize() {
 	// TODO - Inicializar el camino aleatoriamente
-	int max = _dimension;
+	int max = _camino.size();
 	for (int i = 0; i < max; i++)
 		_camino[i] = i;
 
@@ -246,18 +246,13 @@ double Solution::fitness() {
 		}
 		dia += 5;
 	}
-
 	return fitness;
 }
 
 char *Solution::to_String() const {
-	return (char *) "hola"; // FIXME
-//	char* ret;
-//	sprintf(ret, "%d", _camino[0]);
-//	for (int i = 1; i < _dimension; i++) {
-//		sprintf(ret, " %d", _camino[i]);
-//	}
-	return ret.data();
+	char* ret = (char *)_camino.get_first();
+	cout << ret << endl;
+	return ret;
 }
 
 void Solution::to_Solution(char *_string_) {
@@ -277,7 +272,7 @@ int& Solution::pos(const int index) {
 }
 
 unsigned int Solution::dimension() const {
-	return _dimension;
+	return _camino.size();
 }
 
 Rarray<int>& Solution::camino() {
@@ -366,6 +361,7 @@ unsigned int Intra_Operator::number_operator() const {
 }
 
 Intra_Operator *Intra_Operator::create(const unsigned int _number_op) {
+	cout << "numer_op="<<_number_op << endl;
 	switch (_number_op) {
 	case 0:
 		return new Crossover_PMX1();
@@ -765,6 +761,8 @@ Crossover_OX::Crossover_OX() :
 
 // Order Crossover (OX)
 void Crossover_OX::cross(Solution& sol1, Solution& sol2) const { // dadas dos soluciones de la poblacion, las cruza
+//	cout << "Padres( "<< sol1 << " , " << sol2 << ") "; // TODO Borrar
+
 	// FIXME - Da error
 	int i;
 	int j1, j2;
@@ -781,8 +779,8 @@ void Crossover_OX::cross(Solution& sol1, Solution& sol2) const { // dadas dos so
 	bool *esta2 = new bool[max];
 
 	// Establecer puntos de corte
-	int limit2 = rand_int(1, max - 1);
-	int limit1 = rand_int(0, limit2 - 1);
+	int limit2 = rand_int(2, max - 1);
+	int limit1 = rand_int(1, limit2 - 1);
 
 	// Inicializar esta[]
 	for (i = 0; i < max; i++) {
@@ -800,27 +798,31 @@ void Crossover_OX::cross(Solution& sol1, Solution& sol2) const { // dadas dos so
 
 	// Hacer el shift del resto
 	j1 = j2 = i = limit2;
-	if ((limit1 != 0) || (limit2 != max)) {
+	if ((limit1 != 1) || (limit2 != max-1)) {
 
 		while (i != limit1) {
+			// Individuo 1
 			while (esta1[camino2[j1]])
-				j1 = (j1 + 1) % max;
+				j1 = (j1 % (max-1))+1;
 
 			sol1.pos(i) = camino2[j1];
 			esta1[camino2[j1]] = true;
-			j1 = (j1 + 1) % max;
+			j1 = (j1 % (max-1))+1;
 
+			// Individuo 2
 			while (esta2[camino1[j2]])
-				j2 = (j2 + 1) % max;
+				j2 = (j2 % (max-1))+1;
 
 			sol2.pos(i) = camino1[j2];
 			esta2[camino1[j2]] = true;
-			j2 = (j2 + 1) % max;
+			j2 = (j2 % (max-1))+1;
 
-			i = (i + 1) % max;
+			// Iterar
+			i = (i % (max-1))+1;
 		}
 	}
 
+//	cout << " -> "<< sol1 << " & " << sol2 << endl; // TODO Borrar
 	delete[] esta1;
 	delete[] esta2;
 
@@ -1204,7 +1206,7 @@ bool StopCondition_1::EvaluateCondition(const Problem& pbm,
 	if (fin) {
 		//Escribo el resultado en el archivo de salida
 		FILE * pFile;
-		pFile = fopen("solucion.out", "w");
+		pFile = fopen("res/solucion.out", "w");
 		fprintf(pFile, "%d", solver.best_solution_trial().to_String());
 		fclose(pFile);
 	}
