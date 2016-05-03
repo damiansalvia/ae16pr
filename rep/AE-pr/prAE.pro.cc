@@ -1982,7 +1982,7 @@ void Solver::show_state() const {
 //	cout << endl << "Iteration best found: " << iteration_best_found();
 //	cout << endl << "Evaluations best found: " << evaluations_best_found();
 //	cout << endl << "Time best found: " << time_best_found();
-	cout << endl << endl << "Best Solution: " << endl << global_best_solution();
+//	cout << endl << endl << "Best Solution: " << endl << global_best_solution();
 //	cout << endl << endl << "Current time spent (so far): "<< current_time_spent();
 //	cout << endl;
 }

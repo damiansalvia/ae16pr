@@ -33,6 +33,13 @@ int main (int argc, char** argv)
 		     << " Fitness: " << solver.global_best_solution().fitness() << endl;
 		cout << "\n\n :( ---------------------- THE END --------------- :) ";
 
+		// TODO - Borrar
+		//Escribo el resultado en el archivo de salida
+		FILE * pFile;
+		pFile = fopen("res/solucion.out", "w");
+		fprintf(pFile, "%d", solver.best_solution_trial().to_String());
+		fclose(pFile);
+
 		ofstream fexit(argv[3]);
 		if(!fexit) show_message(13);
 		fexit << solver.userstatistics();

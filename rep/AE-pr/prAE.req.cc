@@ -51,7 +51,7 @@ istream& operator>>(istream& is, Problem& pbm) {
 
 	// TODO - Invocar al generador
 	char command_buffer[MAX_BUFFER];
-	if (not strcmp(pbm._nombre,"ej1")){
+	if (strcmp(pbm._nombre,"ej1") != 0){
 		sprintf(command_buffer, "python generador.py %d %f ins/%s", pbm._num_ciudades,
 				tasa_ciudades_no_directo, pbm._nombre);
 		system(command_buffer);
@@ -227,25 +227,33 @@ double Solution::fitness() {
 	double fitness = 0.0;
 
 	// Declarar constantes
-	int temp_media = 1.1, temp_alta = 1.3;
+	double inc_temp_media = 1.1, inc_temp_alta = 1.3;
 	const int ini_temp_media = _pbm.temporadas()[1];
 	const int ini_temp_alta = _pbm.temporadas()[2];
 
 	// TODO - Función de fitness
 	int dia = 1;
 	for (int i = 1; i < _camino.size(); i++) {
-		int valor = _pbm.ciudades()[i - 1][i];
+		// Determinar origen y destino
+		int origen = _camino[i-1];
+		int destino = _camino[i];
+
+		// Obtener el valor y decidir según él o el día
+		int valor = _pbm.ciudades()[origen][destino];
 		if (valor == -1) {
 			// TODO - Pensar caso
 		} else if (dia < ini_temp_media) { // Caso temprada baja
 			fitness += valor;
 		} else if (dia < ini_temp_alta) { // Caso temporada media
-			fitness += valor * temp_media;
+			fitness += valor * inc_temp_media;
 		} else { // Caso temporada alta
-			fitness += valor * temp_alta;
+			fitness += valor * inc_temp_alta;//
 		}
 		dia += 5;
 	}
+//	cout << "camino="
+//			<<_camino[0]<<" "<<_camino[1]<<" "<<_camino[2]<<" "<<_camino[3]<<" "<<_camino[4]
+//			  <<" fitness="<<fitness<<endl;
 	return fitness;
 }
 
@@ -555,12 +563,13 @@ void Mutation::mutate(Solution& sol) const {
 	Solution aux(sol);
 	const int max = sol.dimension();
 	float fit = sol.fitness();
+
 	//	float fit_i = fit;
 	float fit_a;
 	static float prob = 0.5;
 	Direction d = sol.pbm().direction();
 
-	for (int i = 0; i < max; i++)
+	for (int i = 1; i < max; i++) // TODO - Cambiar conociendo problema
 		for (int j = i + 1; j < max; j++) {
 			if (rand01() < prob) {
 //			int i = rand() % max;
@@ -1200,7 +1209,7 @@ StopCondition_1::StopCondition_1() :
 bool StopCondition_1::EvaluateCondition(const Problem& pbm,
 		const Solver& solver, const SetUpParams& setup) {
 	// Condición fitness = 0
-	bool fin = (int) solver.best_cost_trial() == 0;
+	bool fin = (int) solver.current_standard_deviation() < 5;
 
 	// TODO - Escribir archivo de salida
 	if (fin) {
