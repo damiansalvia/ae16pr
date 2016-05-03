@@ -258,6 +258,8 @@ double Solution::fitness() {
 }
 
 char *Solution::to_String() const {
+//	for (int i = 0; i < _camino.size(); i++)
+//		os << " " << sol._camino[i];
 	char* ret = (char *)_camino.get_first();
 	cout << ret << endl;
 	return ret;

@@ -30,7 +30,7 @@ int main (int argc, char** argv)
 	{
 		solver.show_state();
 		cout << "Solution: " << solver.global_best_solution()
-		     << " Fitness: " << solver.global_best_solution().fitness() << endl;
+		     << " Fitness: " << round(solver.global_best_solution().fitness()) << endl; // FIXME
 		cout << "\n\n :( ---------------------- THE END --------------- :) ";
 
 		// TODO - Borrar
