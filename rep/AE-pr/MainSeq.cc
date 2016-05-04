@@ -31,18 +31,16 @@ int main (int argc, char** argv)
 		solver.show_state();
 		cout << "Solution: " << solver.global_best_solution()
 		     << " Fitness: " << round(solver.global_best_solution().fitness()) << endl; // FIXME
-		cout << "\n\n :( ---------------------- THE END --------------- :) ";
+		cout << "\n\n :( ---------------------- THE END --------------- :) " <<endl;
 
-		// TODO - Borrar
-		//Escribo el resultado en el archivo de salida
-		FILE * pFile;
-		pFile = fopen("res/solucion.out", "w");
-		fprintf(pFile, "%d", solver.best_solution_trial().to_String());
-		fclose(pFile);
+//		ofstream fexit(argv[3]);
+//		if(!fexit) show_message(13);
+//		fexit << solver.userstatistics();
 
+		// FIXME - Copiar solucion al archivo de salida
 		ofstream fexit(argv[3]);
 		if(!fexit) show_message(13);
-		fexit << solver.userstatistics();
+		fexit << solver.best_solution_trial();
 
 	}
 	return(0);

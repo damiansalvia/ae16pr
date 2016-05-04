@@ -4,11 +4,11 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 skeleton prAE {
 
 // Problem ---------------------------------------------------------------
-// TODO - Despues de "Problem():" van todos los atributos inicializados
 Problem::Problem() :
 		_num_ciudades(0), _ciudades(NULL),_nombre(NULL) {
 }
@@ -16,7 +16,7 @@ Problem::Problem() :
 ostream& operator<<(ostream& os, const Problem& pbm) {
 	os << endl << endl;
 
-	// TODO - Imprimo los datos de mis atributos problema
+	// Imprimo los datos del problema
 	os << "Cantidad ciudades: " << pbm._num_ciudades << endl;
 
 	os << "Temporadas: ";
@@ -41,7 +41,7 @@ istream& operator>>(istream& is, Problem& pbm) {
 	char buffer[MAX_BUFFER];
 	int i;
 
-	// TODO - Leer archivo con parametros para generador
+	// Leer archivo con parametros para generador
 	is.getline(buffer, MAX_BUFFER, '\n');
 	pbm._num_ciudades = atoi(buffer);
 	is.getline(buffer, MAX_BUFFER, '\n');
@@ -49,7 +49,7 @@ istream& operator>>(istream& is, Problem& pbm) {
 	is.getline(buffer, MAX_BUFFER, '\n');
 	pbm._nombre = buffer;
 
-	// TODO - Invocar al generador
+	// Invocar al generador
 	char command_buffer[MAX_BUFFER];
 	if (strcmp(pbm._nombre,"ej1") != 0){
 		sprintf(command_buffer, "python generador.py %d %f ins/%s", pbm._num_ciudades,
@@ -57,7 +57,7 @@ istream& operator>>(istream& is, Problem& pbm) {
 		system(command_buffer);
 	}
 
-	// TODO - Inicializacion matriz cuidades
+	// Inicializacion matriz cuidades
 	pbm._ciudades = new int*[pbm._num_ciudades];
 	for (int i = 0; i < pbm._num_ciudades; i++) {
 		pbm._ciudades[i] = new int[pbm._num_ciudades];
@@ -65,7 +65,7 @@ istream& operator>>(istream& is, Problem& pbm) {
 			pbm._ciudades[i][j] = -1;
 	}
 
-	// TODO - Cargar datos desde archivo
+	// Cargar datos desde archivo
 	sprintf((char*)command_buffer,"ins/%s_matriz",pbm._nombre);
 	FILE* stream = fopen(command_buffer, "r");
 	char line[1024];
@@ -99,7 +99,7 @@ istream& operator>>(istream& is, Problem& pbm) {
 }
 
 const char* Problem::getfield(char* line, int pos) {
-	// TODO - Leer celda en fila de matriz
+	// Leer celda pos en fila line
 	const char* tok;
 	for (tok = strtok(line, " "); tok && *tok; tok = strtok(NULL, " \n")) {
 		if (!pos--)
@@ -141,7 +141,7 @@ Direction Problem::direction() const {
 }
 
 Problem::~Problem() {
-	// TODO - Liberar memoria de las estructuras
+	// Liberar memoria de las estructuras
 	for (int i = 0; i < _num_ciudades; i++)
 		delete[] _ciudades[i];
 	delete[] _ciudades;
@@ -171,7 +171,7 @@ istream& operator>>(istream& is, Solution& sol) {
 
 ostream& operator<<(ostream& os, const Solution& sol) {
 	for (int i = 0; i < sol.pbm().num_ciudades(); i++)
-		os << " " << sol._camino[i];
+		os << ((i==0)?"":" ") << sol._camino[i];
 	return os;
 }
 
@@ -206,7 +206,7 @@ bool Solution::operator!=(const Solution& sol) const {
 }
 
 void Solution::initialize() {
-	// TODO - Inicializar el camino aleatoriamente
+	// Inicializar el camino aleatoriamente
 	int max = _camino.size();
 	for (int i = 0; i < max; i++)
 		_camino[i] = i;
@@ -223,7 +223,7 @@ void Solution::initialize() {
 }
 
 double Solution::fitness() {
-	// TODO - Inicializar fitness
+	// Inicializar fitness
 	double fitness = 0.0;
 
 	// Declarar constantes
@@ -231,7 +231,7 @@ double Solution::fitness() {
 	const int ini_temp_media = _pbm.temporadas()[1];
 	const int ini_temp_alta = _pbm.temporadas()[2];
 
-	// TODO - Función de fitness
+	// Función de fitness
 	int dia = 1;
 	for (int i = 1; i < _camino.size(); i++) {
 		// Determinar origen y destino
@@ -257,12 +257,8 @@ double Solution::fitness() {
 	return fitness;
 }
 
-char *Solution::to_String() const {
-//	for (int i = 0; i < _camino.size(); i++)
-//		os << " " << sol._camino[i];
-	char* ret = (char *)_camino.get_first();
-	cout << ret << endl;
-	return ret;
+char* Solution::to_String() const {
+	return (char*) _camino.get_first();
 }
 
 void Solution::to_Solution(char *_string_) {
@@ -298,13 +294,11 @@ UserStatistics::UserStatistics() {
 }
 
 ostream& operator<<(ostream& os, const UserStatistics& userstat) {
-	// TODO - Imprimir estadísiticas lindo
-	os << "\n---------------------------------------------------------------"
-			<< endl;
-	os << "                   STATISTICS OF TRIALS                   	 "
-			<< endl;
-	os << "------------------------------------------------------------------"
-			<< endl;
+	// FIXME - Imprimir estadísiticas lindo
+	os << endl;
+	os << "---------------------------------------------------------------" << endl;
+	os << "                   STATISTICS OF TRIALS                     	  " << endl;
+	os << "---------------------------------------------------------------" << endl;
 
 	for (int i = 0; i < userstat.result_trials.size(); i++) {
 		os << endl << userstat.result_trials[i].trial << "\t"
@@ -316,9 +310,8 @@ ostream& operator<<(ostream& os, const UserStatistics& userstat) {
 				<< "\t\t\t" << userstat.result_trials[i].time_best_found_trial
 				<< "\t\t" << userstat.result_trials[i].time_spent_trial;
 	}
-	os << endl
-			<< "------------------------------------------------------------------"
-			<< endl;
+	os << endl;
+	os << "------------------------------------------------------------------" << endl;
 	return os;
 }
 
@@ -371,7 +364,6 @@ unsigned int Intra_Operator::number_operator() const {
 }
 
 Intra_Operator *Intra_Operator::create(const unsigned int _number_op) {
-	cout << "numer_op="<<_number_op << endl;
 	switch (_number_op) {
 	case 0:
 		return new Crossover_PMX1();
@@ -571,7 +563,8 @@ void Mutation::mutate(Solution& sol) const {
 	static float prob = 0.5;
 	Direction d = sol.pbm().direction();
 
-	for (int i = 1; i < max; i++) // TODO - Cambiar conociendo problema
+	// TODO - Cambiado conociendo problema
+	for (int i = 1; i < max; i++)
 		for (int j = i + 1; j < max; j++) {
 			if (rand01() < prob) {
 //			int i = rand() % max;
@@ -1210,18 +1203,8 @@ StopCondition_1::StopCondition_1() :
 
 bool StopCondition_1::EvaluateCondition(const Problem& pbm,
 		const Solver& solver, const SetUpParams& setup) {
-	// Condición fitness = 0
-	bool fin = (int) solver.current_standard_deviation() < 5;
-
-	// TODO - Escribir archivo de salida
-	if (fin) {
-		//Escribo el resultado en el archivo de salida
-		FILE * pFile;
-		pFile = fopen("res/solucion.out", "w");
-		fprintf(pFile, "%d", solver.best_solution_trial().to_String());
-		fclose(pFile);
-	}
-	return (fin);
+	// FIXME - Desviacion pequeña
+	return (int) solver.current_standard_deviation() < 5;
 }
 
 StopCondition_1::~StopCondition_1() {
