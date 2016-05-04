@@ -7,8 +7,7 @@ int main (int argc, char** argv)
 
 	system("clear");
 
-	if(argc < 4)
-		show_message(1);
+	if(argc < 4) show_message(1);
 
 	ifstream f1(argv[1]);
 	if (!f1) show_message(11);
