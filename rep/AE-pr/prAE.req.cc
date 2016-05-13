@@ -5,6 +5,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdlib.h>
+#include <iomanip>
+
+using namespace std;
 
 skeleton prAE {
 
@@ -26,10 +30,14 @@ ostream& operator<<(ostream& os, const Problem& pbm) {
 	os << endl;
 
 	os << "Matriz costo ciudades: " << endl;
+	os << "  ";
+	for(int i = 0; i < pbm._num_ciudades; i++)
+		os  << setw(5) << setfill(' ') << i;
+	os << endl;
 	for (int i = 0; i < pbm._num_ciudades; i++) {
-		os << i << ": ";
+		os << i << " ";
 		for (int j = 0; j < pbm._num_ciudades; j++)
-			os << pbm._ciudades[i][j] << " ";
+			os  << setw(5) << setfill(' ') << pbm._ciudades[i][j];
 		os << endl;
 	}
 	os << endl;
@@ -51,9 +59,9 @@ istream& operator>>(istream& is, Problem& pbm) {
 
 	// Invocar al generador
 	char command_buffer[MAX_BUFFER];
-	if (strcmp(pbm._nombre,"ej1") != 0){
-		sprintf(command_buffer, "python generador.py %d %f ins/%s", pbm._num_ciudades,
-				tasa_ciudades_no_directo, pbm._nombre);
+	if (strcmp(pbm._nombre,"ej1") != 0){ // OBS - No sobreescribir Ejercicio 1
+		sprintf(command_buffer, "python generador.py %d %f ins/%s",
+				pbm._num_ciudades, tasa_ciudades_no_directo, pbm._nombre);
 		system(command_buffer);
 	}
 
@@ -222,32 +230,38 @@ void Solution::initialize() {
 	}
 }
 
-double Solution::fitness() {
-	// Inicializar fitness
-	double fitness = 0.0;
+int compare (const void * a, const void * b) {
+  return ( *(int*)b - *(int*)a );
+}
 
+double Solution::fitness() {
 	// Declarar constantes
+	int** ciudades = _pbm.ciudades();
+	int size = _camino.size();
 	double inc_temp_media = 1.1, inc_temp_alta = 1.3;
 	const int ini_temp_media = _pbm.temporadas()[1];
 	const int ini_temp_alta = _pbm.temporadas()[2];
 
+	// Inicializar fitness
+	double fitness = 0.0;
+
 	// Función de fitness
 	int dia = 1;
-	for (int i = 1; i < _camino.size(); i++) {
+	for (int i = 1; i < size; i++) {
 		// Determinar origen y destino
 		int origen = _camino[i-1];
 		int destino = _camino[i];
 
 		// Obtener el valor y decidir según él o el día
-		int valor = _pbm.ciudades()[origen][destino];
+		int valor = ciudades[origen][destino];
 		if (valor == -1) {
-			// TODO - Pensar caso
+			return UINT_MAX;
 		} else if (dia < ini_temp_media) { // Caso temprada baja
 			fitness += valor;
 		} else if (dia < ini_temp_alta) { // Caso temporada media
 			fitness += valor * inc_temp_media;
 		} else { // Caso temporada alta
-			fitness += valor * inc_temp_alta;//
+			fitness += valor * inc_temp_alta;
 		}
 		dia += 5;
 	}
@@ -829,7 +843,6 @@ void Crossover_OX::cross(Solution& sol1, Solution& sol2) const { // dadas dos so
 //	cout << " -> "<< sol1 << " & " << sol2 << endl; // TODO Borrar
 	delete[] esta1;
 	delete[] esta2;
-
 }
 
 void Crossover_OX::execute(Rarray<Solution*>& sols) const {
@@ -872,8 +885,8 @@ Crossover_CX::Crossover_CX() :
 }
 
 // Cycle Crossover (CX)
-void Crossover_CX::cross(Solution& sol1, Solution& sol2) const // dadas dos soluciones de la poblacion, las cruza
-		{
+void Crossover_CX::cross(Solution& sol1, Solution& sol2) const { // dadas dos soluciones de la poblacion, las cruza
+
 	Solution *s1 = crossAux(sol1, sol2);
 	Solution *s2 = crossAux(sol2, sol1);
 
@@ -1205,6 +1218,7 @@ bool StopCondition_1::EvaluateCondition(const Problem& pbm,
 		const Solver& solver, const SetUpParams& setup) {
 	// FIXME - Desviacion pequeña
 	return (int) solver.current_standard_deviation() < 5;
+	return 0;
 }
 
 StopCondition_1::~StopCondition_1() {
