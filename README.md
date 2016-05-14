@@ -16,6 +16,43 @@ Antes de comenzar cabe destacar que clasificamos a cada una de las clases en una
 
 ---
 
+##Descripción del problema
+Un espia debe realizar una misión secreta visitando cierta cantidad de ciudades en determinada cantidad de 
+días partiendo siempre de la misma ciudad. No debe visitar la misma ciudad dos veces y cada ciudad la visitará 
+exatamente cinco días. 
+
+Los costos del viaje entre ciudades están previamente estipulados para temporada baja, ocacionalmente de forma asimétrica (el costo de ida y de vuelta pude variar o puede no existir un viaje bidireccional - valor *-1* en la matriz de costo) y está sujeto a un incremento procentual por temporadas media y alta (10% y 30% respectivamente). Dado que la moneda corriente no acepta fraciones de unidad, el costo resultante se debe redondear al entero más cercano.
+
+El problema consiste en encontrar la ruta más económica para que el espía pueda realizar su misión cumpliendo con todas las restricciones plateadas.
+
+---
+
+##Descripción de la solución
+Se plantea la necesidad de contar con un camino que describa la ruta que hará el espía por las ciudades economizando su costo monetario, considerando que el mismo está sujeto a las zafras por temporada y por consiguiente a las estadías en cada ciudad.
+
+De esta forma, la solución será una secuencia de identificadores de ciudades de enteros cuyo índice indicará qué ciudad visitará el espía en determinada ocasión (p.e. para el caso de cinco ciudades, el vector *<4,2,5,3,1>* indica que primero visita la ciudad 4, luego la 2, y así sucesivamente).
+
+La factibilidad de la solución estará dada por ciertas características:
+* La primer ciudad deberá ser el origen (identificador 0)
+* El camino deberá ser una permitación de identificadores de las ciudades entre 0...cantidad-1
+* Para cada par de ciudades <i,j> adyacentes en la ruta el costo(i,j) != -1 
+
+De esta manera, el problema se puede formalizar de la siguiente manera:<br>
+
+Conociendo
+
+![eq_ciudades](http://www.sciweavers.org/tex2img.php?eq=N%3Acantidad%5C_ciudades&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+
+![eq_costos](http://www.sciweavers.org/tex2img.php?eq=costo%20%5Cin%20%5Cmathcal%7BM%7D_%7BN%5C%20x%5C%20N%7D&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+
+![eq_temporadas](http://www.sciweavers.org/tex2img.php?eq=int%5C_temp%3D%3Ct_i%20%20%3A%20%20%20t_i%20%3D%5Cbegin%7Bcases%7D1%20%26%20i%2A5%20%3C%20media%5C%5C1.1%20%26%20i%2A5%20%3C%20alta%5C%5C1.3%20%26%20sino%5Cend%7Bcases%7D%20%2C%20i%20%5Cin%20%7B0..N-1%7D%3E&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+
+Se busca
+
+![eq_camino](http://www.sciweavers.org/tex2img.php?eq=%5Cmin%20_%7B%3Cx_0%2C...%2Cx_%7BN-1%7D%3E%7D%20%7B%5Csum_%7Bi%3D1%7D%5E%7BN-1%7D%20costo%28x_%7Bi-1%7D%2Cx_i%29%2Ainc%5C_temp%28i%29%7D%20%20%20&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+
+---
+
 ##Instalación
 
 1) Instalar MPICH
@@ -38,6 +75,15 @@ Antes de comenzar cabe destacar que clasificamos a cada una de las clases en una
 
 ---
 
+#Recursos
+1) Se proveen de dos scripts para *Python 2.7*:<br>
+`generación.py`: Calcula la matriz de costo y temporadas<br>
+`validación.py`: Evalúa la factibilidad de la solución según la matriz de costos y temporadas<br>
+<br>
+2) Se provee un script *bash* para la ejecución completa del algoritmo según los parámetros indicados<br>
+
+---
+
 ##Parametros *.cfg
 * **Operadores de seleccion**<br>
  	0:Random <br> 
@@ -56,6 +102,20 @@ Antes de comenzar cabe destacar que clasificamos a cada una de las clases en una
 
 ---
 
+##Ejecución
+1) Generar binarios
+
+> make all
+
+2) Ubicarse en el directorio
+
+> cd rep/AE-pr
+
+3) Ejecutar aplicacion
+
+> make SEQ nomb=<nombre_instancia> cant=<cantidad_ciudades> tasa=<tasa_desconectados> 
+
+---
 ## Usando Eclipse CDT - Problemas comunes
 
 **Parser**<br> 
