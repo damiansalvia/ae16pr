@@ -41,15 +41,15 @@ De esta manera, el problema se puede formalizar de la siguiente manera:<br>
 
 Conociendo
 
-![eq_ciudades](http://www.sciweavers.org/tex2img.php?eq=N%3Acantidad%5C_ciudades&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+![eq_ciudades](http://bit.ly/228hGrU)
 
-![eq_costos](http://www.sciweavers.org/tex2img.php?eq=costo%20%5Cin%20%5Cmathcal%7BM%7D_%7BN%5C%20x%5C%20N%7D&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+![eq_costos](http://bit.ly/228hmcS)
 
-![eq_temporadas](http://www.sciweavers.org/tex2img.php?eq=int%5C_temp%3D%3Ct_i%20%20%3A%20%20%20t_i%20%3D%5Cbegin%7Bcases%7D1%20%26%20i%2A5%20%3C%20media%5C%5C1.1%20%26%20i%2A5%20%3C%20alta%5C%5C1.3%20%26%20sino%5Cend%7Bcases%7D%20%2C%20i%20%5Cin%20%7B0..N-1%7D%3E&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+![eq_temporadas](http://bit.ly/1WxADVd)
 
 Se busca
 
-![eq_camino](http://www.sciweavers.org/tex2img.php?eq=%5Cmin%20_%7B%3Cx_0%2C...%2Cx_%7BN-1%7D%3E%7D%20%7B%5Csum_%7Bi%3D1%7D%5E%7BN-1%7D%20costo%28x_%7Bi-1%7D%2Cx_i%29%2Ainc%5C_temp%28i%29%7D%20%20%20&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+![eq_camino](http://bit.ly/228gKnm)
 
 ---
 
