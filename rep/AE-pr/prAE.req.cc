@@ -14,7 +14,7 @@ skeleton prAE {
 
 // Problem ---------------------------------------------------------------
 Problem::Problem() :
-		_num_ciudades(0), _ciudades(NULL),_nombre(NULL) {
+		_num_ciudades(0), _ciudades(NULL), _nombre(NULL) {
 }
 
 ostream& operator<<(ostream& os, const Problem& pbm) {
@@ -31,13 +31,13 @@ ostream& operator<<(ostream& os, const Problem& pbm) {
 
 	os << "Matriz costo ciudades: " << endl;
 	os << "  ";
-	for(int i = 0; i < pbm._num_ciudades; i++)
-		os  << setw(5) << setfill(' ') << i;
+	for (int i = 0; i < pbm._num_ciudades; i++)
+		os << setw(5) << setfill(' ') << i;
 	os << endl;
 	for (int i = 0; i < pbm._num_ciudades; i++) {
 		os << i << " ";
 		for (int j = 0; j < pbm._num_ciudades; j++)
-			os  << setw(5) << setfill(' ') << pbm._ciudades[i][j];
+			os << setw(5) << setfill(' ') << pbm._ciudades[i][j];
 		os << endl;
 	}
 	os << endl;
@@ -55,11 +55,13 @@ istream& operator>>(istream& is, Problem& pbm) {
 	is.getline(buffer, MAX_BUFFER, '\n');
 	float tasa_ciudades_no_directo = (float) atof(buffer);
 	is.getline(buffer, MAX_BUFFER, '\n');
-	pbm._nombre = buffer;
+	pbm._nombre = strdup(buffer);
+	is.getline(buffer, MAX_BUFFER, '\n');
+	int generate = atoi(buffer);
 
 	// Invocar al generador
 	char command_buffer[MAX_BUFFER];
-	if (strcmp(pbm._nombre,"ej1") != 0){ // OBS - No sobreescribir Ejercicio 1
+	if (generate) { // OBS - No sobreescribir Ejercicio 1 o casos de test
 		sprintf(command_buffer, "python generador.py %d %f ins/%s",
 				pbm._num_ciudades, tasa_ciudades_no_directo, pbm._nombre);
 		system(command_buffer);
@@ -74,7 +76,7 @@ istream& operator>>(istream& is, Problem& pbm) {
 	}
 
 	// Cargar datos desde archivo
-	sprintf((char*)command_buffer,"ins/%s_matriz",pbm._nombre);
+	sprintf((char*) command_buffer, "ins/%s_matriz", pbm._nombre);
 	FILE* stream = fopen(command_buffer, "r");
 	char line[1024];
 	i = 0;
@@ -89,7 +91,7 @@ istream& operator>>(istream& is, Problem& pbm) {
 	}
 	fclose(stream);
 
-	sprintf((char*)command_buffer,"ins/%s_temporadas",pbm._nombre);
+	sprintf((char*) command_buffer, "ins/%s_temporadas", pbm._nombre);
 	stream = fopen(command_buffer, "r");
 	i = 0;
 	while (fgets(line, 1024, stream) && i < 3) {
@@ -179,7 +181,7 @@ istream& operator>>(istream& is, Solution& sol) {
 
 ostream& operator<<(ostream& os, const Solution& sol) {
 	for (int i = 0; i < sol.pbm().num_ciudades(); i++)
-		os << ((i==0)?"":" ") << sol._camino[i];
+		os << ((i == 0) ? "" : " ") << sol._camino[i];
 	return os;
 }
 
@@ -230,8 +232,8 @@ void Solution::initialize() {
 	}
 }
 
-int compare (const void * a, const void * b) {
-  return ( *(int*)b - *(int*)a );
+int compare(const void * a, const void * b) {
+	return (*(int*) b - *(int*) a);
 }
 
 double Solution::fitness() {
@@ -249,7 +251,7 @@ double Solution::fitness() {
 	int dia = 1;
 	for (int i = 1; i < size; i++) {
 		// Determinar origen y destino
-		int origen = _camino[i-1];
+		int origen = _camino[i - 1];
 		int destino = _camino[i];
 
 		// Obtener el valor y decidir según él o el día
@@ -310,9 +312,12 @@ UserStatistics::UserStatistics() {
 ostream& operator<<(ostream& os, const UserStatistics& userstat) {
 	// FIXME - Imprimir estadísiticas lindo
 	os << endl;
-	os << "---------------------------------------------------------------" << endl;
-	os << "                   STATISTICS OF TRIALS                     	  " << endl;
-	os << "---------------------------------------------------------------" << endl;
+	os << "---------------------------------------------------------------"
+			<< endl;
+	os << "                   STATISTICS OF TRIALS                     	  "
+			<< endl;
+	os << "---------------------------------------------------------------"
+			<< endl;
 
 	for (int i = 0; i < userstat.result_trials.size(); i++) {
 		os << endl << userstat.result_trials[i].trial << "\t"
@@ -325,7 +330,8 @@ ostream& operator<<(ostream& os, const UserStatistics& userstat) {
 				<< "\t\t" << userstat.result_trials[i].time_spent_trial;
 	}
 	os << endl;
-	os << "------------------------------------------------------------------" << endl;
+	os << "------------------------------------------------------------------"
+			<< endl;
 	return os;
 }
 
@@ -590,11 +596,10 @@ void Mutation::mutate(Solution& sol) const {
 					fit = fit_a;
 					sol = aux;
 				}
-				/*					else if(rand01() < 0.1)
-				 {
-				 fit = fit_a;
-				 sol = aux;
-				 }*/
+//				else if(rand01() < 0.1) {
+//				 	fit = fit_a;
+//				 	sol = aux;
+//				}
 				else
 					aux = sol;
 			}
@@ -816,27 +821,27 @@ void Crossover_OX::cross(Solution& sol1, Solution& sol2) const { // dadas dos so
 
 	// Hacer el shift del resto
 	j1 = j2 = i = limit2;
-	if ((limit1 != 1) || (limit2 != max-1)) {
+	if ((limit1 != 1) || (limit2 != max - 1)) {
 
 		while (i != limit1) {
 			// Individuo 1
 			while (esta1[camino2[j1]])
-				j1 = (j1 % (max-1))+1;
+				j1 = (j1 % (max - 1)) + 1;
 
 			sol1.pos(i) = camino2[j1];
 			esta1[camino2[j1]] = true;
-			j1 = (j1 % (max-1))+1;
+			j1 = (j1 % (max - 1)) + 1;
 
 			// Individuo 2
 			while (esta2[camino1[j2]])
-				j2 = (j2 % (max-1))+1;
+				j2 = (j2 % (max - 1)) + 1;
 
 			sol2.pos(i) = camino1[j2];
 			esta2[camino1[j2]] = true;
-			j2 = (j2 % (max-1))+1;
+			j2 = (j2 % (max - 1)) + 1;
 
 			// Iterar
-			i = (i % (max-1))+1;
+			i = (i % (max - 1)) + 1;
 		}
 	}
 
@@ -1217,8 +1222,8 @@ StopCondition_1::StopCondition_1() :
 bool StopCondition_1::EvaluateCondition(const Problem& pbm,
 		const Solver& solver, const SetUpParams& setup) {
 	// FIXME - Desviacion pequeña
-	return (int) solver.current_standard_deviation() < 5;
-	return 0;
+	//return (int) solver.current_standard_deviation() < 5;
+	return false;
 }
 
 StopCondition_1::~StopCondition_1() {

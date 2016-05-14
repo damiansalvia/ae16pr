@@ -1946,7 +1946,7 @@ void Solver::UpdateFromCfgState() {
 }
 
 void Solver::show_state() const {
-//	cout << endl << "Current State ---------------------------------------------"<< endl;
+	cout << endl << "Current State ---------------------------------------------"<< endl;
 	/*		cout << endl << "Selection parents    -> " << select_parents();
 	 cout << endl << "Parameter of selection: " << parameter_select_parents();
 	 cout << endl << "Selection offsprings -> " << select_offprings();
@@ -1961,30 +1961,30 @@ void Solver::show_state() const {
 	 cout << endl << "Migration_selection_2: " << migration_selection_2();
 	 cout << endl << "Migration_selection_conf_2: " << migration_selection_conf_2() << endl;
 	 */
-//	cout << endl << "Current trial: " << current_trial();
-//	cout << endl << "Current iteration: " << current_iteration();
-//	cout << endl << "Current evaluations: " << current_evaluations();
-//	cout << endl << "Current best cost: " << current_best_cost();
-//	cout << endl << "Current worst cost: " << current_worst_cost();
-//	cout << endl << "Current Average cost: " << current_average_cost();
-//	cout << endl << "Current Standard Deviation: " << current_standard_deviation();
-//	cout << endl << endl << "Trial: ";
-//	cout << endl << "Best cost trial: " << best_cost_trial();
-//	cout << endl << "Worst cost trial: " << worst_cost_trial();
-//	cout << endl << "Iteration best found in trial: " << iteration_best_found_in_trial();
-//	cout << endl << "Evaluations best found in trial: " << evaluations_best_found_in_trial();
-//	cout << endl << "Time best found trial: " << time_best_found_trial();
-//	cout << endl << "Time spent in trial: " << time_spent_trial();
-//	cout << endl << endl << "Global: ";
-//	cout << endl << "Global best cost: " << global_best_cost();
-//	cout << endl << "Global worst cost: " << global_worst_cost();
-//	cout << endl << "Trial best found: " << trial_best_found();
-//	cout << endl << "Iteration best found: " << iteration_best_found();
-//	cout << endl << "Evaluations best found: " << evaluations_best_found();
-//	cout << endl << "Time best found: " << time_best_found();
-//	cout << endl << endl << "Best Solution: " << endl << global_best_solution();
-//	cout << endl << endl << "Current time spent (so far): "<< current_time_spent();
-//	cout << endl;
+	cout << endl << "Current trial: " << current_trial();
+	cout << endl << "Current iteration: " << current_iteration();
+	cout << endl << "Current evaluations: " << current_evaluations();
+	cout << endl << "Current best cost: " << current_best_cost();
+	cout << endl << "Current worst cost: " << current_worst_cost();
+	cout << endl << "Current Average cost: " << current_average_cost();
+	cout << endl << "Current Standard Deviation: " << current_standard_deviation();
+	cout << endl << endl << "Trial: ";
+	cout << endl << "Best cost trial: " << best_cost_trial();
+	cout << endl << "Worst cost trial: " << worst_cost_trial();
+	cout << endl << "Iteration best found in trial: " << iteration_best_found_in_trial();
+	cout << endl << "Evaluations best found in trial: " << evaluations_best_found_in_trial();
+	cout << endl << "Time best found trial: " << time_best_found_trial();
+	cout << endl << "Time spent in trial: " << time_spent_trial();
+	cout << endl << endl << "Global: ";
+	cout << endl << "Global best cost: " << global_best_cost();
+	cout << endl << "Global worst cost: " << global_worst_cost();
+	cout << endl << "Trial best found: " << trial_best_found();
+	cout << endl << "Iteration best found: " << iteration_best_found();
+	cout << endl << "Evaluations best found: " << evaluations_best_found();
+	cout << endl << "Time best found: " << time_best_found();
+	cout << endl << endl << "Best Solution: " << endl << global_best_solution();
+	cout << endl << endl << "Current time spent (so far): "<< current_time_spent();
+	cout << endl;
 }
 
 Solver::~Solver() {
