@@ -257,7 +257,7 @@ double Solution::fitness() {
 		// Obtener el valor y decidir según él o el día
 		int valor = ciudades[origen][destino];
 		if (valor == -1) {
-			return UINT_MAX;
+			return INT_MAX;
 		} else if (dia < ini_temp_media) { // Caso temprada baja
 			fitness += valor;
 		} else if (dia < ini_temp_alta) { // Caso temporada media
@@ -266,6 +266,29 @@ double Solution::fitness() {
 			fitness += valor * inc_temp_alta;
 		}
 		dia += 5;
+
+		// LOG: camino y fitness si mejora
+		static int ultimo_costo = INT_MAX;
+		static Rarray<int> ultimo_camino;
+		int nuevo_costo = (int)round(fitness);
+		if(nuevo_costo <= ultimo_costo){ // OBS - "<=" porque diferentes caminos mismo fitness
+			bool iguales = true;
+			for(int i = 0; iguales && i < ultimo_camino.size(); i++)
+				iguales = iguales && _camino[i] == ultimo_camino[i];
+			if(!iguales){
+				cout << "DEBUG: Nuevo mejor - " << ultimo_costo << " vs " << nuevo_costo << endl;
+				char path[32];
+				sprintf(path,"res/%s",_pbm.nombre());
+				FILE *fp = fopen(path,"a");
+				fprintf(fp,"%i :",nuevo_costo);
+				for(int i = 0; i < size; i++)
+					fprintf(fp," %i",_camino[i]);
+				fputs("\n",fp);
+				fclose(fp);
+			}
+			ultimo_costo = nuevo_costo;
+			ultimo_camino = _camino;
+		}
 	}
 //	cout << "camino="
 //			<<_camino[0]<<" "<<_camino[1]<<" "<<_camino[2]<<" "<<_camino[3]<<" "<<_camino[4]

@@ -17,7 +17,7 @@ int main (int argc, char** argv)
 	if (!f1) show_message(11);
 
 	// Crear el path y crear archivo con parametros
-	char path[32]; // <nomb>/<nomb>.in
+	char path[32]; // ins/<nomb>.in
 	sprintf((char*)path,"ins/%s.in",argv[4]);
 	FILE *fp = fopen(path,"w");
 	fprintf(fp,"%s\n%s\n%s\n%s\n",argv[2],argv[3],argv[4],argv[5]);
