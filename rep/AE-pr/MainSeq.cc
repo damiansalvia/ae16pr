@@ -16,11 +16,11 @@ int main (int argc, char** argv)
 	ifstream f1(argv[1]);
 	if (!f1) show_message(11);
 
-	// Crear el path y crear archivo con parametros
-	char path[32]; // ins/<nomb>.in
+	// Borrar log si existe y crear archivo con parametros
+	char path[32]; sprintf((char*)path,"res/%s.out",argv[4]); remove(path);
 	sprintf((char*)path,"ins/%s.in",argv[4]);
 	FILE *fp = fopen(path,"w");
-	fprintf(fp,"%s\n%s\n%s\n%s\n",argv[2],argv[3],argv[4],argv[5]);
+		fprintf(fp,"%s\n%s\n%s\n%s\n",argv[2],argv[3],argv[4],argv[5]);
 	fclose(fp);
 
 	// Cargar archivo con parametros
@@ -43,17 +43,18 @@ int main (int argc, char** argv)
 
 	if (solver.pid()==0) {
 		// Mostrar estadísticas finales
-		solver.show_state();
-		cout << endl << endl << "Solution --------------------------------------------------" << endl << endl
+		//solver.show_state();
+		cout << endl << endl
+				<< ":( ------------------- THE SOLUTION ------------- :)" << endl << endl
 				<< "Solution: " << solver.global_best_solution() << endl
 				<< "Fitness: " << round(solver.global_best_solution().fitness()) << endl // FIXME
 				<< "Iteration: " << solver.iteration_best_found()<< endl << endl;
-		cout << "\n\n :( ---------------------- THE END --------------- :) " <<endl;
+		cout << ":( ---------------------- THE END --------------- :) " <<endl;
 
 		// Copiar solucion al archivo de salida
 		ofstream fexit(argv[6]);
 		if(!fexit) show_message(13);
-		fexit << solver.best_solution_trial();
+		fexit << solver.global_best_solution();
 
 	}
 	return(0);

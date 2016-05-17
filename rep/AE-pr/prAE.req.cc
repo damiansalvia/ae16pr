@@ -18,29 +18,28 @@ Problem::Problem() :
 }
 
 ostream& operator<<(ostream& os, const Problem& pbm) {
-	os << endl << endl;
+	os << ":( ------------------- THE PROBLEM -------------- :)" << endl << endl;
 
 	// Imprimo los datos del problema
-	os << "Cantidad ciudades: " << pbm._num_ciudades << endl;
+	os << "Cantidad ciudades:\n\t" << pbm._num_ciudades << endl;
 
-	os << "Temporadas: ";
+	os << endl << "Temporadas: " << endl;
 	for (int i = 0; i < 3; i++)
-		os << ((i == 0) ? "Baja(" : (i == 1) ? "Media(" : "Alta(")
-				<< pbm._temporadas[i] << ") ";
-	os << endl;
+		os << ((i == 0) ? "\tBaja" : (i == 1) ? "\tMedia" : "\tAlta")
+		   << "\tdesde dia " << pbm._temporadas[i]
+		   << "\thasta dia " << ((i == 2) ? 5*(pbm._num_ciudades-1) : pbm._temporadas[i+1]) << endl;
 
-	os << "Matriz costo ciudades: " << endl;
-	os << "  ";
+	os << endl << "Matriz costo ciudades: " << endl;
+	os << "\t  ";
 	for (int i = 0; i < pbm._num_ciudades; i++)
 		os << setw(5) << setfill(' ') << i;
 	os << endl;
 	for (int i = 0; i < pbm._num_ciudades; i++) {
-		os << i << " ";
+		os << "\t" << i << " ";
 		for (int j = 0; j < pbm._num_ciudades; j++)
 			os << setw(5) << setfill(' ') << pbm._ciudades[i][j];
 		os << endl;
 	}
-	os << endl;
 
 	return os;
 }
@@ -162,6 +161,8 @@ Problem::~Problem() {
 Solution::Solution(const Problem& pbm) :
 		_pbm(pbm) {
 	_camino = Rarray<int>(pbm.num_ciudades());
+	_ultimo.fitness = DBL_MAX;
+	_ultimo.camino = Rarray<int>(pbm.num_ciudades());
 }
 
 const Problem& Solution::pbm() const {
@@ -248,8 +249,8 @@ double Solution::fitness() {
 	double fitness = 0.0;
 
 	// Función de fitness
-	int dia = 1;
-	for (int i = 1; i < size; i++) {
+	int dia = 1, i = 1;
+	for (i = 1; i < size; i++) {
 		// Determinar origen y destino
 		int origen = _camino[i - 1];
 		int destino = _camino[i];
@@ -257,7 +258,7 @@ double Solution::fitness() {
 		// Obtener el valor y decidir según él o el día
 		int valor = ciudades[origen][destino];
 		if (valor == -1) {
-			return INT_MAX;
+			return DBL_MAX;
 		} else if (dia < ini_temp_media) { // Caso temprada baja
 			fitness += valor;
 		} else if (dia < ini_temp_alta) { // Caso temporada media
@@ -266,29 +267,24 @@ double Solution::fitness() {
 			fitness += valor * inc_temp_alta;
 		}
 		dia += 5;
+	}
 
-		// LOG: camino y fitness si mejora
-		static int ultimo_costo = INT_MAX;
-		static Rarray<int> ultimo_camino;
-		int nuevo_costo = (int)round(fitness);
-		if(nuevo_costo <= ultimo_costo){ // OBS - "<=" porque diferentes caminos mismo fitness
-			bool iguales = true;
-			for(int i = 0; iguales && i < ultimo_camino.size(); i++)
-				iguales = iguales && _camino[i] == ultimo_camino[i];
-			if(!iguales){
-				cout << "DEBUG: Nuevo mejor - " << ultimo_costo << " vs " << nuevo_costo << endl;
-				char path[32];
-				sprintf(path,"res/%s",_pbm.nombre());
-				FILE *fp = fopen(path,"a");
-				fprintf(fp,"%i :",nuevo_costo);
+	// LOG: camino y fitness si mejora
+	if(strcmp(_pbm.nombre(),"Ej1") == 0 && // FIXME - Solo para Ej1
+			fitness <= _ultimo.fitness) { // OBS - "<=" porque diferentes caminos mismo fitness
+		for(i = 0; _camino[i] == _ultimo.camino[i] && i < _camino.size(); i++);
+		if(i < _camino.size()){ // sin distintos
+			cout << "\rDEBUG: Mejor fitness " << round(fitness);
+			char path[32]; sprintf((char*)path,"res/%s.out",_pbm.nombre());
+			FILE *fp = fopen(path,"a");
+				fprintf(fp,"%i :",(int)round(fitness));
 				for(int i = 0; i < size; i++)
 					fprintf(fp," %i",_camino[i]);
 				fputs("\n",fp);
-				fclose(fp);
-			}
-			ultimo_costo = nuevo_costo;
-			ultimo_camino = _camino;
+			fclose(fp);
 		}
+		_ultimo.fitness = fitness;
+		_ultimo.camino = _camino;
 	}
 //	cout << "camino="
 //			<<_camino[0]<<" "<<_camino[1]<<" "<<_camino[2]<<" "<<_camino[3]<<" "<<_camino[4]

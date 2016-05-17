@@ -111,6 +111,10 @@ public:
 
 private:
 	Rarray<int> _camino;
+	struct{
+		double fitness;
+		Rarray<int> camino;
+	} _ultimo;
 	const Problem& _pbm;
 };
 
