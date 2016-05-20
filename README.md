@@ -37,19 +37,19 @@ La factibilidad de la solución estará dada por ciertas características:
 * El camino deberá ser una permitación de identificadores de las ciudades entre 0...cantidad-1
 * Para cada par de ciudades <i,j> adyacentes en la ruta el costo(i,j) != -1 
 
-De esta manera, el problema se puede formalizar de la siguiente manera:<br>
+De esta manera, el problema se puede formalizar como:<br>
 
-Conociendo
+> Conociendo
 
-![eq_ciudades](img/eq_ciudades.png)
+>>![eq_ciudades](img/eq_ciudades.png)
 
-![eq_costos](img/eq_costos.png)
+>>![eq_costos](img/eq_costos.png)
 
-![eq_temporadas](img/eq_temporadas.png)
+>>![eq_temporadas](img/eq_temporadas.png)
 
-Se busca
+>Se busca
 
-![eq_camino](img/eq_camino.png)
+>>![eq_camino](img/eq_camino.png)
 
 ---
 
