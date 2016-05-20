@@ -115,6 +115,11 @@ Se busca
 
 > ./ejercicio2.sh ins/ej1/ej1\_matriz ins/ej1/ej1\_temporadas
 
+Alternativamente
+
+> cd rep/AE-pr
+> make SEQ
+
 ---
 ## Usando Eclipse CDT - Problemas comunes
 
