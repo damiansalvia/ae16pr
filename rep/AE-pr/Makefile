@@ -21,4 +21,4 @@ WAN:
 	$(RUN) -v  -p4pg pgfileWan MainWan
 	
 SEQ:
-	./MainSeq prAE.cfg ej1/ej1.in ej1/solucion.out
+	./MainSeq prAE.cfg ../../ins/ej1/ej1.in ../../ins/ej1/solucion.out
