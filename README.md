@@ -70,8 +70,6 @@ Se busca
 >\# MPICH library<br>
 >MPI_BIN=/usr/bin<br>
 
-4) Compilar libreria
-> make all
 
 ---
 
@@ -103,17 +101,19 @@ Se busca
 ---
 
 ##Ejecución
-1) Generar binarios
+1) Ejecutar script
 
-> make all
+> ./ejercicio2.sh <path\_matriz> <path\_temporadas>
 
-2) Ubicarse en el directorio
+2) Se generan dos archivos en "/"
 
-> cd rep/AE-pr
+- *parametros.in* con la entrada 
 
-3) Ejecutar aplicacion
+- *solucion.out* con la salida 
 
-> make SEQ nomb=<nombre_instancia> cant=<cantidad_ciudades> tasa=<tasa_desconectados> 
+**Ejemplo**: Para ejercicio1 se debe invocar así:
+
+> ./ejercicio2.sh rep/AE-pr/ej1/ej1\_matriz rep/AE-pr/ej1/ej1\_temporadas
 
 ---
 ## Usando Eclipse CDT - Problemas comunes

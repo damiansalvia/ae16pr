@@ -14,7 +14,7 @@ skeleton prAE {
 
 // Problem ---------------------------------------------------------------
 Problem::Problem() :
-		_num_ciudades(0), _ciudades(NULL), _nombre(NULL) {
+		_num_ciudades(0), _ciudades(NULL){
 }
 
 ostream& operator<<(ostream& os, const Problem& pbm) {
@@ -52,19 +52,9 @@ istream& operator>>(istream& is, Problem& pbm) {
 	is.getline(buffer, MAX_BUFFER, '\n');
 	pbm._num_ciudades = atoi(buffer);
 	is.getline(buffer, MAX_BUFFER, '\n');
-	float tasa_ciudades_no_directo = (float) atof(buffer);
+	char* path_matriz = strdup(buffer);
 	is.getline(buffer, MAX_BUFFER, '\n');
-	pbm._nombre = strdup(buffer);
-	is.getline(buffer, MAX_BUFFER, '\n');
-	int generate = atoi(buffer);
-
-	// Invocar al generador
-	char command_buffer[MAX_BUFFER];
-	if (generate) { // OBS - No sobreescribir Ejercicio 1 o casos de test
-		sprintf(command_buffer, "python generador.py %d %f ins/%s",
-				pbm._num_ciudades, tasa_ciudades_no_directo, pbm._nombre);
-		system(command_buffer);
-	}
+	char* path_temporadas = strdup(buffer);
 
 	// Inicializacion matriz cuidades
 	pbm._ciudades = new int*[pbm._num_ciudades];
@@ -74,9 +64,8 @@ istream& operator>>(istream& is, Problem& pbm) {
 			pbm._ciudades[i][j] = -1;
 	}
 
-	// Cargar datos desde archivo
-	sprintf((char*) command_buffer, "ins/%s_matriz", pbm._nombre);
-	FILE* stream = fopen(command_buffer, "r");
+	// Cargar matriz
+	FILE* stream = fopen(path_matriz, "r");
 	char line[1024];
 	i = 0;
 	while (fgets(line, 1024, stream) && i < pbm._num_ciudades) {
@@ -90,8 +79,8 @@ istream& operator>>(istream& is, Problem& pbm) {
 	}
 	fclose(stream);
 
-	sprintf((char*) command_buffer, "ins/%s_temporadas", pbm._nombre);
-	stream = fopen(command_buffer, "r");
+	// Cargar temporadas
+	stream = fopen(path_temporadas, "r");
 	i = 0;
 	while (fgets(line, 1024, stream) && i < 3) {
 		char* tmp = strdup(line);
@@ -129,10 +118,6 @@ int Problem::num_ciudades() const {
 	return _num_ciudades;
 }
 
-char* Problem::nombre() const {
-	return _nombre;
-}
-
 bool Problem::operator==(const Problem& pbm) const {
 	// FIXME - Comparar dos insancias de tipo Problem por medio de la matriz
 	if (_num_ciudades != pbm.num_ciudades())
@@ -161,8 +146,6 @@ Problem::~Problem() {
 Solution::Solution(const Problem& pbm) :
 		_pbm(pbm) {
 	_camino = Rarray<int>(pbm.num_ciudades());
-	_ultimo.fitness = DBL_MAX;
-	_ultimo.camino = Rarray<int>(pbm.num_ciudades());
 }
 
 const Problem& Solution::pbm() const {
@@ -268,28 +251,10 @@ double Solution::fitness() {
 		}
 		dia += 5;
 	}
-
-	// LOG: camino y fitness si mejora
-	if(strcmp(_pbm.nombre(),"Ej1") == 0 && // FIXME - Solo para Ej1
-			fitness <= _ultimo.fitness) { // OBS - "<=" porque diferentes caminos mismo fitness
-		for(i = 0; _camino[i] == _ultimo.camino[i] && i < _camino.size(); i++);
-		if(i < _camino.size()){ // sin distintos
-			cout << "\rDEBUG: Mejor fitness " << round(fitness);
-			char path[32]; sprintf((char*)path,"res/%s.out",_pbm.nombre());
-			FILE *fp = fopen(path,"a");
-				fprintf(fp,"%i :",(int)round(fitness));
-				for(int i = 0; i < size; i++)
-					fprintf(fp," %i",_camino[i]);
-				fputs("\n",fp);
-			fclose(fp);
-		}
-		_ultimo.fitness = fitness;
-		_ultimo.camino = _camino;
-	}
 //	cout << "camino="
 //			<<_camino[0]<<" "<<_camino[1]<<" "<<_camino[2]<<" "<<_camino[3]<<" "<<_camino[4]
 //			  <<" fitness="<<fitness<<endl;
-	return fitness;
+	return round(fitness);
 }
 
 char* Solution::to_String() const {

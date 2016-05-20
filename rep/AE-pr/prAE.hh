@@ -66,7 +66,6 @@ public:
 	int num_ciudades() const;
 	const int* temporadas() const;
 	int** ciudades() const;
-	char* nombre() const;
 	const char* getfield(char* line, int num);
 
 private:
@@ -75,7 +74,6 @@ private:
 	int _num_ciudades;
 	int _temporadas[3];
 	int** _ciudades;
-	char* _nombre;
 
 };
 
@@ -111,10 +109,6 @@ public:
 
 private:
 	Rarray<int> _camino;
-	struct{
-		double fitness;
-		Rarray<int> camino;
-	} _ultimo;
 	const Problem& _pbm;
 };
 
