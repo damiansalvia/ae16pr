@@ -41,15 +41,15 @@ De esta manera, el problema se puede formalizar de la siguiente manera:<br>
 
 Conociendo
 
-<img src="http://www.sciweavers.org/tex2img.php?eq=N%3Acantidad%5C_ciudades&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0" align="center" border="0" alt="N:cantidad\_ciudades" width="194" height="19" />
+![eq_ciudades](img/eq_ciudades.png)
 
-<img src="http://www.sciweavers.org/tex2img.php?eq=costo%20%5Cin%20%5Cmathcal%7BM%7D_%7Bcantidad%5C_ciudades%5C%20%20x%5C%20%20cantidad%5C_ciudades%7D&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0" align="center" border="0" alt="costo \in \mathcal{M}_{cantidad\_ciudades\  x\  cantidad\_ciudades}" width="354" height="19" />
+![eq_costos](img/eq_costos.png)
 
-<img src="http://www.sciweavers.org/tex2img.php?eq=int%5C_temp%3D%3Ct_i%20%20%3A%20%20%20t_i%20%3D%5Cbegin%7Bcases%7D1%20%26%20i%2A5%20%3C%20media%5C%5C1.1%20%26%20i%2A5%20%3C%20alta%5C%5C1.3%20%26%20sino%5Cend%7Bcases%7D%20%2C%20i%20%5Cin%20%7B0..N-1%7D%3E&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0" align="center" border="0" alt="int\_temp=<t_i  :   t_i =\begin{cases}1 & i*5 < media\\1.1 & i*5 < alta\\1.3 & sino\end{cases} , i \in {0..N-1}>" width="469" height="81" />
+![eq_temporadas](img/eq_temporadas.png)
 
 Se busca
 
-<img src="http://www.sciweavers.org/tex2img.php?eq=%5Cmin%20_%7B%3Cx_0%2C...%2Cx_%7BN-1%7D%3E%7D%20%7B%5Csum_%7Bi%3D1%7D%5E%7BN-1%7D%20costo%28x_%7Bi-1%7D%2Cx_i%29%2Ainc%5C_temp%28i%29%7D&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0" align="center" border="0" alt="\min _{<x_0,...,x_{N-1}>} {\sum_{i=1}^{N-1} costo(x_{i-1},x_i)*inc\_temp(i)}" width="362" height="53" />
+![eq_camino](img/eq_camino.png)
 
 ---
 
