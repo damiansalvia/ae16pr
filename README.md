@@ -103,7 +103,7 @@ Se busca
 ##Ejecución
 1) Ejecutar script
 
-> ./ejercicio2.sh <path\_matriz> <path\_temporadas>
+> ./ejercicio2.sh path\_matriz path\_temporadas
 
 2) Se generan dos archivos en "/"
 
