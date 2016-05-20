@@ -118,6 +118,7 @@ De esta manera, el problema se puede formalizar como:<br>
 Alternativamente
 
 > cd rep/AE-pr
+
 > make SEQ
 
 ---
