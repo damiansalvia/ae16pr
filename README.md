@@ -113,7 +113,7 @@ Se busca
 
 **Ejemplo**: Para ejercicio1 se debe invocar así:
 
-> ./ejercicio2.sh rep/AE-pr/ej1/ej1\_matriz rep/AE-pr/ej1/ej1\_temporadas
+> ./ejercicio2.sh ins/ej1/ej1\_matriz ins/ej1/ej1\_temporadas
 
 ---
 ## Usando Eclipse CDT - Problemas comunes
