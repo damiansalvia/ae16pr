@@ -41,7 +41,7 @@ int main (int argc, char** argv){
 				<< ":( ------------------- THE SOLUTION ------------- :)" << endl << endl
 				<< "Solution: " << solver.global_best_solution() << endl
 				<< "Fitness: " << solver.global_best_solution().fitness() << endl // FIXME
-				<< "Iteration: " << solver.iteration_best_found()<< endl << endl;
+				<< "Iteration: " << solver.iteration_best_found() << "/" << solver.current_iteration() << endl << endl;
 		cout << ":( ---------------------- THE END --------------- :) " <<endl;
 
 		// Copiar solucion al archivo de salida

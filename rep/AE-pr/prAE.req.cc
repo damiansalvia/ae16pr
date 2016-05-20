@@ -200,19 +200,33 @@ bool Solution::operator!=(const Solution& sol) const {
 }
 
 void Solution::initialize() {
-	// Inicializar el camino aleatoriamente
+	int** ciudades = _pbm.ciudades();
 	int max = _camino.size();
+
+	// Inicializar el camino aleatoriamente pero correcto
 	for (int i = 0; i < max; i++)
 		_camino[i] = i;
-
 	for (int i = 0; i < max * 5; i++) { // 5 es arbitrario para dispersar valor inicial
-		int ind1 = rand_int(1, max - 1); // La posicion 0 no se cambia, por eso entre 1..max-1
-		int ind2 = rand_int(1, max - 1);
-
-		// Hace swap para generar aleatorio
-		int aux = _camino[ind1];
-		_camino[ind1] = _camino[ind2];
-		_camino[ind2] = aux;
+		while (true){
+			int ind1 = rand_int(1, max - 1); // La posicion 0 no se cambia, por eso entre 1..max-1
+			int ind2 = rand_int(1, max - 1);
+			if(ciudades[ind1][ind2-1] != -1 &&
+					((ind2 == max-1 && ciudades[ind1][ind2]) || ciudades[ind1][ind2+1] != -1) &&
+					ciudades[ind2][ind1-1] != -1 &&
+					((ind1 == max-1 && ciudades[ind2][ind1]) || ciudades[ind2][ind1+1] != -1)){
+				int aux = _camino[ind1];
+				_camino[ind1] = _camino[ind2];
+				_camino[ind2] = aux;
+				break;
+			}
+		}
+//		int ind1 = rand_int(1, max - 1); // La posicion 0 no se cambia, por eso entre 1..max-1
+//		int ind2 = rand_int(1, max - 1);
+//
+//		// Hace swap para generar aleatorio
+//		int aux = _camino[ind1];
+//		_camino[ind1] = _camino[ind2];
+//		_camino[ind2] = aux;
 	}
 }
 
