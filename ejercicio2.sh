@@ -13,7 +13,7 @@ if [ ! -f $1 ]; then
     exit 1
 fi;
 
-if [ ! -f $2]; then
+if [ ! -f $2 ]; then
     printf "%s not found\n" $2
     exit 1
 fi
@@ -21,8 +21,11 @@ fi
 # ----------------------
 #   Otorgar permisos   
 # ----------------------
-setfacl -m user:algevo00:x HOME
-setfacl -R -m user:algevo00:rwx HOME/AE_2016
+my_home='/ens/home01/d/damian.salvia'
+setfacl -m user:algevo00:x $my_home
+setfacl -R -m user:algevo00:rwx $my_home/AE_2016
+setfacl -m user:nicolas.mechulam:x $my_home
+setfacl -R -m user:nicolas.mechulam:rwx $my_home/AE_2016
 echo "Permisos otorgados"
 
 # ----------------------
@@ -33,7 +36,7 @@ make all
 # ----------------------
 #    Configuracion     
 # ----------------------
-rm parametros.in
+rm -f parametros.in
 cant_ciudades=$(sed -n $= $1)
 echo $cant_ciudades >> parametros.in
 echo $1 >> parametros.in

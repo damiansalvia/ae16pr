@@ -12,12 +12,13 @@ path_matriz = str(sys.argv[2])
 path_temporadas = str(sys.argv[3])
 
 # Ruta
-#ruta = '../'
-ruta = '../rep/AE-pr/'
+ruta = '../'
+#ruta = '../rep/AE-pr/'
 
 # Commando
-#comando = './ejercicio2 '+path_matriz+' '+path_temporadas
-comando = "make SEQ "
+comando = '../ejercicio2 '+path_matriz+' '+path_temporadas
+print comando
+#comando = "make SEQ "
 
 class Solucion:
 
@@ -42,7 +43,8 @@ archSol = open('solucion.csv', 'w')
 
 for idx in range(cantidad):
 	
-	os.system(comando + ' -C '+ ruta +' > temp')
+	print comando
+	os.system(comando + ' > temp')
 
 	temp = open('temp')
 	lineas = temp.read()
@@ -55,10 +57,8 @@ for idx in range(cantidad):
 
 	match = re.search('Fitness:\s*(\d+)',lineas)
 	fit = match.group(1)
-
-	match = re.search('Current time spen.*:\s*(.*)',lineas)
-	time = match.group(1)
-	m = re.search('e\+(\d+)', time)
+	
+	time = '000'
 	time = str(int(re.sub('e\+(\d+)','', time)) * 10^int(m.group(1))) if m else time
 
 	soluciones.append(Solucion(sol,int(itera),int(fit),int(time)))
