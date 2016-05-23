@@ -37,19 +37,19 @@ La factibilidad de la solución estará dada por ciertas características:
 * El camino deberá ser una permitación de identificadores de las ciudades entre 0...cantidad-1
 * Para cada par de ciudades <i,j> adyacentes en la ruta el costo(i,j) != -1 
 
-De esta manera, el problema se puede formalizar de la siguiente manera:<br>
+De esta manera, el problema se puede formalizar como:<br>
 
-Conociendo
+> Conociendo
 
-![eq_ciudades](http://www.sciweavers.org/tex2img.php?eq=N%3Acantidad%5C_ciudades&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+>>![eq_ciudades](img/eq_ciudades.png)
 
-![eq_costos](http://www.sciweavers.org/tex2img.php?eq=costo%20%5Cin%20%5Cmathcal%7BM%7D_%7Bcantidad%5C_ciudades%5C%20%20x%5C%20%20cantidad%5C_ciudades%7D&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+>>![eq_costos](img/eq_costos.png)
 
-![eq_temporadas](http://www.sciweavers.org/tex2img.php?eq=int%5C_temp%3D%3Ct_i%20%20%3A%20%20%20t_i%20%3D%5Cbegin%7Bcases%7D1%20%26%20i%2A5%20%3C%20media%5C%5C1.1%20%26%20i%2A5%20%3C%20alta%5C%5C1.3%20%26%20sino%5Cend%7Bcases%7D%20%2C%20i%20%5Cin%20%7B0..N-1%7D%3E&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+>>![eq_temporadas](img/eq_temporadas.png)
 
-Se busca
+>Se busca
 
-![eq_camino](http://www.sciweavers.org/tex2img.php?eq=%5Cmin%20_%7B%3Cx_0%2C...%2Cx_%7BN-1%7D%3E%7D%20%7B%5Csum_%7Bi%3D1%7D%5E%7BN-1%7D%20costo%28x_%7Bi-1%7D%2Cx_i%29%2Ainc%5C_temp%28i%29%7D%20%20%20&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+>>![eq_camino](img/eq_camino.png)
 
 ---
 
@@ -70,8 +70,6 @@ Se busca
 >\# MPICH library<br>
 >MPI_BIN=/usr/bin<br>
 
-4) Compilar libreria
-> make all
 
 ---
 
@@ -103,17 +101,25 @@ Se busca
 ---
 
 ##Ejecución
-1) Generar binarios
+1) Ejecutar script
 
-> make all
+> ./ejercicio2.sh path\_matriz path\_temporadas
 
-2) Ubicarse en el directorio
+2) Se generan dos archivos en "/"
+
+- *parametros.in* con la entrada 
+
+- *solucion.out* con la salida 
+
+**Ejemplo**: Para ejercicio1 se debe invocar así:
+
+> ./ejercicio2.sh ins/ej1/ej1\_matriz ins/ej1/ej1\_temporadas
+
+Alternativamente
 
 > cd rep/AE-pr
 
-3) Ejecutar aplicacion
-
-> make SEQ nomb=<nombre_instancia> cant=<cantidad_ciudades> tasa=<tasa_desconectados> 
+> make SEQ
 
 ---
 ## Usando Eclipse CDT - Problemas comunes

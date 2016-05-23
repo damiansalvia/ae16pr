@@ -1,11 +1,5 @@
 include ../../environment
 
-# Se asignan valores por defecto
-cant=5 
-tasa=0.0 
-nomb=ej1
-gene=0
-
 all: MainLan MainSeq
 
 clean:
@@ -27,4 +21,4 @@ WAN:
 	$(RUN) -v  -p4pg pgfileWan MainWan
 	
 SEQ:
-	./MainSeq prAE.cfg $(cant) $(tasa) $(nomb) $(gene) res/solucion.out
+	./MainSeq prAE.cfg ../../ins/ej1/ej1.in ../../ins/ej1/solucion.out

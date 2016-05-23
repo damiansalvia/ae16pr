@@ -1,30 +1,25 @@
 #include "prAE.hh"
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
-int main (int argc, char** argv)
-{
+int main (int argc, char** argv){
+	// Invocacion: ./MainSeq $(path_cgf) $(path_params) $(path_out)
+
 	using skeleton prAE;
+	int musec, sec, min, hr, _10e6_ = (int)10e5;
 
 	system("clear");
 
 	// Verificar que estén todos los argumentos
-	// self cgf num tas nom out
-	if(argc < 7) show_message(1);
+	if(argc < 4) show_message(1);
 
 	// Cargar *.cfg
 	ifstream f1(argv[1]);
 	if (!f1) show_message(11);
 
-	// Borrar log si existe y crear archivo con parametros
-	char path[32]; sprintf((char*)path,"res/%s.out",argv[4]); remove(path);
-	sprintf((char*)path,"ins/%s.in",argv[4]);
-	FILE *fp = fopen(path,"w");
-		fprintf(fp,"%s\n%s\n%s\n%s\n",argv[2],argv[3],argv[4],argv[5]);
-	fclose(fp);
-
 	// Cargar archivo con parametros
-	ifstream f2(path);
+	ifstream f2(argv[2]);
 	if (!f2) show_message(12);
 
 	// Cargar problema
@@ -47,12 +42,24 @@ int main (int argc, char** argv)
 		cout << endl << endl
 				<< ":( ------------------- THE SOLUTION ------------- :)" << endl << endl
 				<< "Solution: " << solver.global_best_solution() << endl
-				<< "Fitness: " << round(solver.global_best_solution().fitness()) << endl // FIXME
-				<< "Iteration: " << solver.iteration_best_found()<< endl << endl;
+				<< "Fitness: " << solver.global_best_solution().fitness() << endl // FIXME
+				<< "Iteration: " << solver.iteration_best_found() << "/" << solver.current_iteration() << endl << endl;
+
+		musec = (int) solver.time_best_found();
+		sec   = (int) (musec / _10e6_) % 60;
+		min   = (int) ((musec / (_10e6_*60)) % 60);
+		hr    = (int) ((musec / (_10e6_*60*60)) % 24);
+		printf("Time best found: %02i:%02i:%02i\n",hr,min,sec);
+
+		musec = (int) solver.current_time_spent();
+		sec   = (int) (musec / _10e6_) % 60;
+		min   = (int) ((musec / (_10e6_*60)) % 60);
+		hr    = (int) ((musec / (_10e6_*60*60)) % 24);
+		printf("Total time spent: %02i:%02i:%02i\n\n",hr,min,sec);
 		cout << ":( ---------------------- THE END --------------- :) " <<endl;
 
 		// Copiar solucion al archivo de salida
-		ofstream fexit(argv[6]);
+		ofstream fexit(argv[3]);
 		if(!fexit) show_message(13);
 		fexit << solver.global_best_solution();
 
